@@ -46,7 +46,7 @@ foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 $GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type';
 
 
-class tl_page_folderurl extends Backend
+class tl_page_folderurl extends tl_page
 {
 	
 	/**
