@@ -35,7 +35,7 @@ foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 {
 	if ($callback[1] == 'addBreadcrumb')
 	{
-		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = 'tl_page_folderurl';
+		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = 'tl_page_folderpage';
 	}
 }
 
@@ -46,7 +46,7 @@ foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 $GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type';
 
 
-class tl_page_folderurl extends tl_page
+class tl_page_folderpage extends tl_page
 {
 	
 	/**
