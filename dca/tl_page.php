@@ -30,6 +30,8 @@
 /**
  * Config
  */
+$GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = array('tl_page_folderpage', 'configureFolderPage');
+
 foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback )
 {
 	if ($callback[1] == 'addBreadcrumb')
@@ -42,7 +44,7 @@ foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 /**
  * Palettes
  */
-$GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type';
+$GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type;{protected_legend:hide},protected;{layout_legend:hide},includeLayout;{cache_legend:hide},includeCache;{chmod_legend:hide},includeChmod;{expert_legend:hide},guests';
 
 
 class tl_page_folderpage extends tl_page
@@ -138,6 +140,25 @@ class tl_page_folderpage extends tl_page
 <ul id="tl_breadcrumb">
   <li>' . implode(' &gt; </li><li>', $arrLinks) . '</li>
 </ul>';
+	}
+	
+	
+	public function configureFolderPage($dc)
+	{
+		if ($dc->activeRecord && $dc->activeRecord->type == 'folder')
+		{
+			$arrSet = array
+			(
+				'noSearch'		=> '1',
+				'sitemap'		=> 'map_never',
+				'hide'			=> '1',
+				'published'		=> '1',
+				'start'			=> '',
+				'stop'			=> '',
+			);
+			
+			$this->Database->prepare("UPDATE tl_page %s WHERE id=?")->set($arrSet)->execute($dc->id);
+		}
 	}
 }
 
