@@ -32,3 +32,9 @@
  */
 $GLOBALS['TL_LANG']['PTY']['folder'] = 'Ordner';
 
+
+/**
+ * Miscellaneous
+ */
+$GLOBALS['TL_LANG']['ERR']['topLevelRoot'] = 'Seiten in der obersten Ebene müssen Website-Startpunkte oder Ordner sein!';
+

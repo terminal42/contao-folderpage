@@ -38,6 +38,11 @@ foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 	{
 		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = 'tl_page_folderpage';
 	}
+	
+	if ($callback[1] == 'showFallbackWarning')
+	{
+		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = 'tl_page_folderpage';
+	}
 }
 
 
@@ -45,6 +50,12 @@ foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
  * Palettes
  */
 $GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type;{protected_legend:hide},protected;{layout_legend:hide},includeLayout;{cache_legend:hide},includeCache;{chmod_legend:hide},includeChmod;{expert_legend:hide},guests';
+
+
+/**
+ * Fields
+ */
+$GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][0] = 'tl_page_folderpage';
 
 
 class tl_page_folderpage extends tl_page
@@ -140,6 +151,46 @@ class tl_page_folderpage extends tl_page
 <ul id="tl_breadcrumb">
   <li>' . implode(' &gt; </li><li>', $arrLinks) . '</li>
 </ul>';
+	}
+	
+	
+	/**
+	 * Make sure that top-level pages are root pages or folders
+	 * @param mixed
+	 * @param DataContainer
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function checkRootType($varValue, DataContainer $dc)
+	{
+		if ($varValue != 'root' && $varValue != 'folder' && $dc->activeRecord->pid == 0)
+		{
+			throw new Exception($GLOBALS['TL_LANG']['ERR']['topLevelRoot']);
+		}
+
+		return $varValue;
+	}
+	
+	
+	/**
+	 * Show a warning if there is no language fallback page
+	 */
+	public function showFallbackWarning()
+	{
+		if ($this->Input->get('act') != '')
+		{
+			return;
+		}
+
+		$this->import('Messages');
+		$this->addRawMessage($this->Messages->languageFallback());
+		
+		$objCount = $this->Database->execute("SELECT COUNT(*) AS count FROM tl_page WHERE pid=0 AND type!='root' AND type!='folder'");
+
+		if ($objCount->count > 0)
+		{
+			$this->addRawMessage('<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>');
+		}
 	}
 	
 	
