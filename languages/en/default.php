@@ -32,3 +32,9 @@
  */
 $GLOBALS['TL_LANG']['PTY']['folder'] = 'Folder';
 
+
+/**
+ * Miscellaneous
+ */
+$GLOBALS['TL_LANG']['ERR']['topLevelRoot'] = 'Top-level pages must be website root pages or folders!';
+
