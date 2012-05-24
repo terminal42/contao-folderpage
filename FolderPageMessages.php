@@ -1,8 +1,8 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php if (!defined('TL_ROOT')) die('You cannot access this file directly!');
 
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2010 Leo Feyer
+ * Copyright (C) 2005-2011 Leo Feyer
  *
  * Formerly known as TYPOlight Open Source CMS.
  *
@@ -27,15 +27,23 @@
  */
 
 
-/**
- * Page types
- */
-$GLOBALS['TL_LANG']['PTY']['folder'] = 'Folder';
+class FolderPageMessages extends Messages
+{
 
+	/**
+	 * Show a warning if there are non-root pages on the top-level
+	 * @return string
+	 */
+	public function topLevelRoot()
+	{
+		$objCount = $this->Database->execute("SELECT COUNT(*) AS count FROM tl_page WHERE pid=0 AND type!='root' AND type!='folder'");
 
-/**
- * Miscellaneous
- */
-$GLOBALS['TL_LANG']['ERR']['topLevelRoot'] = 'Top-level pages must be website root pages or folders!';
-$GLOBALS['TL_LANG']['ERR']['topLevelRegular'] = 'There are pages on the top-level which are not website root pages or folders. Creating websites without a website root page is no longer supported, so please ensure that all pages are grouped under a website root page.';
+		if ($objCount->count > 0)
+		{
+			return '<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>';
+		}
+
+		return '';
+	}
+}
 

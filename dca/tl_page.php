@@ -10,12 +10,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this program. If not, please visit the Free
  * Software Foundation website at <http://www.gnu.org/licenses/>.
@@ -38,7 +38,7 @@ foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 	{
 		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = 'tl_page_folderpage';
 	}
-	
+
 	if ($callback[1] == 'showFallbackWarning')
 	{
 		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = 'tl_page_folderpage';
@@ -55,12 +55,15 @@ $GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type
 /**
  * Fields
  */
-$GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][0] = 'tl_page_folderpage';
+if ($GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1] == 'checkRootType')
+{
+	$GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][0] = 'tl_page_folderpage';
+}
 
 
 class tl_page_folderpage extends tl_page
 {
-	
+
 	/**
 	 * Override the default breadcrumb menu, we want to show pages before root pages
 	 */
@@ -152,8 +155,8 @@ class tl_page_folderpage extends tl_page
   <li>' . implode(' &gt; </li><li>', $arrLinks) . '</li>
 </ul>';
 	}
-	
-	
+
+
 	/**
 	 * Make sure that top-level pages are root pages or folders
 	 * @param mixed
@@ -170,8 +173,8 @@ class tl_page_folderpage extends tl_page
 
 		return $varValue;
 	}
-	
-	
+
+
 	/**
 	 * Show a warning if there is no language fallback page
 	 */
@@ -184,7 +187,7 @@ class tl_page_folderpage extends tl_page
 
 		$this->import('Messages');
 		$this->addRawMessage($this->Messages->languageFallback());
-		
+
 		$objCount = $this->Database->execute("SELECT COUNT(*) AS count FROM tl_page WHERE pid=0 AND type!='root' AND type!='folder'");
 
 		if ($objCount->count > 0)
@@ -192,8 +195,8 @@ class tl_page_folderpage extends tl_page
 			$this->addRawMessage('<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>');
 		}
 	}
-	
-	
+
+
 	public function configureFolderPage($dc)
 	{
 		if ($dc->activeRecord && $dc->activeRecord->type == 'folder')
@@ -207,7 +210,7 @@ class tl_page_folderpage extends tl_page
 				'start'			=> '',
 				'stop'			=> '',
 			);
-			
+
 			$this->Database->prepare("UPDATE tl_page %s WHERE id=?")->set($arrSet)->execute($dc->id);
 		}
 	}
