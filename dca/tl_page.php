@@ -15,7 +15,7 @@
  */
 $GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = array('tl_page_folderpage', 'configureFolderPage');
 
-foreach( $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback )
+foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback)
 {
 	if ($callback[1] == 'addBreadcrumb')
 	{
