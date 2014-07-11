@@ -43,7 +43,6 @@ if ($GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1] == 'c
 	$GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][0] = 'tl_page_folderpage';
 }
 
-$GLOBALS['TL_DCA']['tl_page']['select']['buttons_callback'] = array(array('tl_page_folderpage', 'addAliasButton'));
 
 class tl_page_folderpage extends tl_page
 {
@@ -199,75 +198,5 @@ class tl_page_folderpage extends tl_page
 			$this->Database->prepare("UPDATE tl_page %s WHERE id=?")->set($arrSet)->execute($dc->id);
 		}
 	}
-
-
-    /**
-     * Automatically generate the folder URL aliases
-     * @param array
-     * @return array
-     */
-    public function addAliasButton($arrButtons)
-    {
-
-        // Generate the aliases
-        if (Input::post('FORM_SUBMIT') == 'tl_select' && isset($_POST['alias']))
-        {
-            $session = $this->Session->getData();
-            $ids = $session['CURRENT']['IDS'];
-
-            foreach ($ids as $id)
-            {
-                $objPage = PageModel::findWithDetails($id);
-
-                if ($objPage === null)
-                {
-                    continue;
-                }
-
-                if($objPage->type == 'folder'){
-                    // folders dos`n hav a alias
-                    $strAlias = '';
-                }else{
-                    // Set the new alias
-                    $strAlias = standardize(String::restoreBasicEntities($objPage->title));
-                }
-
-                // Prepend the folder URL
-                if ($GLOBALS['TL_CONFIG']['folderUrl'])
-                {
-                    $objPage->folderUrl = str_replace("//", "/", $objPage->folderUrl);
-                    if($objPage->folderUrl == "/") $objPage->folderUrl = "";
-
-                    $strAlias = $objPage->folderUrl . $strAlias;
-                }
-
-                // The alias has not changed
-                if ($strAlias == $objPage->alias)
-                {
-                    continue;
-                }
-
-                // Initialize the version manager
-                $objVersions = new Versions('tl_page', $id);
-                $objVersions->initialize();
-
-                // Store the new alias
-                $this->Database->prepare("UPDATE tl_page SET alias=? WHERE id=?")
-                    ->execute($strAlias, $id);
-
-                // Create a new version
-                $objVersions->create();
-            }
-
-            $this->redirect($this->getReferer());
-        }
-
-        // Add the button
-        $arrButtons['alias'] = '<input type="submit" name="alias" id="alias" class="tl_submit" accesskey="a" value="'.specialchars($GLOBALS['TL_LANG']['MSC']['aliasSelected']).'"> ';
-
-        return $arrButtons;
-    }
-
-
 
 }
