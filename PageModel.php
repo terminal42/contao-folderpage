@@ -18,9 +18,11 @@ class PageModel extends \Contao\PageModel
         $objPage = parent::loadDetails();
 
         if(!empty($objPage)){
-            if(isset($objPage->folderUrl)){
-                $objPage->folderUrl = str_replace("//", "/", $objPage->folderUrl);
-                if($objPage->folderUrl == "/") $objPage->folderUrl = "";
+            if($objPage->type == 'folder'){
+                $objPage->alias = '###folder###';
+
+            }else if(isset($objPage->folderUrl)){
+                $objPage->folderUrl = str_replace("###folder###/", "", $objPage->folderUrl);
             }
         }
         return $objPage;

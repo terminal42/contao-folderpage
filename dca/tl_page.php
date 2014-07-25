@@ -192,7 +192,7 @@ class tl_page_folderpage extends tl_page
 				'published'		=> '1',
 				'start'			=> '',
 				'stop'			=> '',
-                'alias'         => '',
+                'alias'         => '###folder###',
 			);
 
 			$this->Database->prepare("UPDATE tl_page %s WHERE id=?")->set($arrSet)->execute($dc->id);
