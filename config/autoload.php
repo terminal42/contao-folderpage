@@ -16,4 +16,5 @@ ClassLoader::addClasses(array
 (
     'FolderPageMessages'         => 'system/modules/folderpage/FolderPageMessages.php',
     'PageFolder'                 => 'system/modules/folderpage/PageFolder.php',
+    'PageModel'                  => 'system/modules/folderpage/PageModel.php',
 ));
