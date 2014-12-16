@@ -1,0 +1,28 @@
+{
+    "name": "terminal42/contao-folderpage",
+    "type": "contao-module",
+    "description": "Contao Open Source CMS extension folderpage",
+    "keywords": ["contao", "folder", "page", "folderpage"],
+    "license": "LGPL",
+    "authors":[
+        {
+            "name":"terminal42 gmbh",
+            "homepage":"http://terminal42.ch"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.7",
+        "contao/core": ">=3.2.5,<4",
+        "contao-community-alliance/composer-plugin": "2.*"
+    },
+    "replace": {
+        "contao-legacy/folderpage": "self.version"
+    },
+    "extra": {
+        "contao": {
+            "sources": {
+                "": "system/modules/folderpage"
+            }
+        }
+    }
+}
