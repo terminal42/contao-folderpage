@@ -12,7 +12,7 @@
 class PageFolder extends PageRegular
 {
 
-	public function generate(Database_Result $objPage)
+	public function generate($objPage)
 	{
 		$objHandler = new $GLOBALS['TL_PTY']['error_404']();
 		$objHandler->generate($objPage->id);
