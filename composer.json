@@ -21,7 +21,23 @@
     "extra": {
         "contao": {
             "sources": {
-                "": "system/modules/folderpage"
+                "": "system/modules/folderpage",
+                "themes/default/images/folder.gif":   "system/themes/default/folder.gif",
+                "themes/default/images/folder_1.gif": "system/themes/default/folder_1.gif",
+                "themes/default/images/folder_2.gif": "system/themes/default/folder_2.gif",
+                "themes/default/images/folder_3.gif": "system/themes/default/folder_3.gif",
+                "themes/default/images/folder_4.gif": "system/themes/default/folder_4.gif",
+                "themes/default/images/folder_5.gif": "system/themes/default/folder_5.gif",
+                "themes/default/images/folder_6.gif": "system/themes/default/folder_6.gif",
+                "themes/default/images/folder_7.gif": "system/themes/default/folder_7.gif",
+                "themes/flexible/images/folder.gif":  "system/themes/flexible/folder.gif",
+                "themes/flexible/images/folder_1.gif": "system/themes/flexible/folder_1.gif",
+                "themes/flexible/images/folder_2.gif": "system/themes/flexible/folder_2.gif",
+                "themes/flexible/images/folder_3.gif": "system/themes/flexible/folder_3.gif",
+                "themes/flexible/images/folder_4.gif": "system/themes/flexible/folder_4.gif",
+                "themes/flexible/images/folder_5.gif": "system/themes/flexible/folder_5.gif",
+                "themes/flexible/images/folder_6.gif": "system/themes/flexible/folder_6.gif",
+                "themes/flexible/images/folder_7.gif": "system/themes/flexible/folder_7.gif"
             }
         }
     }
