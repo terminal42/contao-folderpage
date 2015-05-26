@@ -9,10 +9,10 @@
  * @link       http://github.com/terminal42/contao-folderpage
  */
 
-namespace Terminal42\Folderpage;
+namespace Terminal42\FolderpageBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class Terminal42FolderPageBundle extends Bundle
+class Terminal42FolderpageBundle extends Bundle
 {
 }
