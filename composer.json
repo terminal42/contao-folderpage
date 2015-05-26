@@ -16,5 +16,12 @@
     },
     "replace": {
         "contao-legacy/folderpage": "self.version"
-    }
+    },
+    "extras": {
+        "branch-alias": {
+            "dev-develop": "4.0.x-dev"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
 }
