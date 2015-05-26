@@ -17,7 +17,8 @@ $GLOBALS['TL_PTY']['folder'] = 'PageFolder';
  * Replace core Hooks
  */
 foreach( $GLOBALS['TL_HOOKS']['getSystemMessages'] as $k => $v ) {
-	if ($v[0] == 'Messages') {
+	if ($v[0] == 'Messages' && $v[1] == 'topLevelRoot') {
 		$GLOBALS['TL_HOOKS']['getSystemMessages'][$k][0] = '\\Terminal42\\FolderpageBundle\\HookManager';
+        break;
 	}
 }
