@@ -42,10 +42,11 @@ class DcaManager
     /**
      * Constructor.
      *
-     * @param Connection       $db
-     * @param RequestStack     $requestStack
-     * @param SessionInterface $session
-     * @param RouterInterface  $router
+     * @param Connection            $db
+     * @param RequestStack          $requestStack
+     * @param SessionInterface      $session
+     * @param RouterInterface       $router
+     * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
         Connection $db,
