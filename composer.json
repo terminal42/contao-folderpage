@@ -17,6 +17,11 @@
     "replace": {
         "contao-legacy/folderpage": "self.version"
     },
+    "autoload": {
+        "psr-4": {
+            "Terminal42\\FolderpageBundle\\": "src/"
+        }
+    },
     "extra": {
         "branch-alias": {
             "dev-develop": "2.0.x-dev"
