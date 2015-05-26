@@ -5,3 +5,5 @@ services:
             - '@doctrine.dbal.default_connection'
             - '@request_stack'
             - '@session'
+            - '@router'
+            - '@security.token_storage'
