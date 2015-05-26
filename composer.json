@@ -12,33 +12,9 @@
     ],
     "require": {
         "php": ">=5.3.7",
-        "contao/core": ">=3.2.5,<4",
-        "contao-community-alliance/composer-plugin": "2.*"
+        "contao/core-bundle": "4.*"
     },
     "replace": {
         "contao-legacy/folderpage": "self.version"
-    },
-    "extra": {
-        "contao": {
-            "sources": {
-                "": "system/modules/folderpage",
-                "themes/default/images/folder.gif":    "system/themes/default/images/folder.gif",
-                "themes/default/images/folder_1.gif":  "system/themes/default/images/folder_1.gif",
-                "themes/default/images/folder_2.gif":  "system/themes/default/images/folder_2.gif",
-                "themes/default/images/folder_3.gif":  "system/themes/default/images/folder_3.gif",
-                "themes/default/images/folder_4.gif":  "system/themes/default/images/folder_4.gif",
-                "themes/default/images/folder_5.gif":  "system/themes/default/images/folder_5.gif",
-                "themes/default/images/folder_6.gif":  "system/themes/default/images/folder_6.gif",
-                "themes/default/images/folder_7.gif":  "system/themes/default/images/folder_7.gif",
-                "themes/flexible/images/folder.gif":   "system/themes/flexible/images/folder.gif",
-                "themes/flexible/images/folder_1.gif": "system/themes/flexible/images/folder_1.gif",
-                "themes/flexible/images/folder_2.gif": "system/themes/flexible/images/folder_2.gif",
-                "themes/flexible/images/folder_3.gif": "system/themes/flexible/images/folder_3.gif",
-                "themes/flexible/images/folder_4.gif": "system/themes/flexible/images/folder_4.gif",
-                "themes/flexible/images/folder_5.gif": "system/themes/flexible/images/folder_5.gif",
-                "themes/flexible/images/folder_6.gif": "system/themes/flexible/images/folder_6.gif",
-                "themes/flexible/images/folder_7.gif": "system/themes/flexible/images/folder_7.gif"
-            }
-        }
     }
 }
