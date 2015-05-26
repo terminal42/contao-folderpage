@@ -22,3 +22,8 @@ foreach( $GLOBALS['TL_HOOKS']['getSystemMessages'] as $k => $v ) {
         break;
 	}
 }
+
+/**
+ * Hooks
+ */
+$GLOBALS['TL_HOOKS']['getPageStatusIcon'][] = ['\\Terminal42\\FolderpageBundle\\HookManager', 'getFolderPageIcon'];

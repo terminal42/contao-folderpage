@@ -22,4 +22,21 @@ class HookManager
 
         return '';
     }
+
+    /**
+     * Return our custom image for the folder page type.
+     *
+     * @param object $page
+     * @param string $image
+     *
+     * @return string
+     */
+    public function getFolderPageIcon($page, $image)
+    {
+        if ($page->type == 'folder') {
+            return 'bundles/terminal42folderpage/folder.gif';
+        }
+
+        return $image;
+    }
 }
