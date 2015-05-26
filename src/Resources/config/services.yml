@@ -1,0 +1,7 @@
+services:
+    terminal42.folderpage.dcamanager:
+        class: Terminal42\FolderpageBundle\DcaManager
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '@request_stack'
+            - '@session'

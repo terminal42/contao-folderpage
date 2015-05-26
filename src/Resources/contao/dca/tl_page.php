@@ -13,15 +13,32 @@
 /**
  * Config
  */
-$GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = array('\\Terminal42\\FolderpageBundle\\DcaManager', 'configureFolderPage');
+$GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = function ($dc) {
+    if ($dc->activeRecord && $dc->activeRecord->type == 'folder') {
+        \System::getContainer()
+            ->get('terminal42.folderpage.dcamanager')
+            ->configureFolderPage($dc->id)
+        ;
+    }
+};
 
 foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback) {
 	if ($callback[1] == 'addBreadcrumb') {
-		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = '\\Terminal42\\FolderpageBundle\\DcaManager';
+		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = function () {
+            \System::getContainer()
+                ->get('terminal42.folderpage.dcamanager')
+                ->addBreadcrumb()
+            ;
+        };
 	}
 
 	if ($callback[1] == 'showFallbackWarning') {
-		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = '\\Terminal42\\FolderpageBundle\\DcaManager';
+		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = function () {
+            \System::getContainer()
+                ->get('terminal42.folderpage.dcamanager')
+                ->showFallbackWarning()
+            ;
+        };
 	}
 }
 
@@ -36,8 +53,10 @@ $GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type
  * Fields
  */
 if ($GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1] == 'checkRootType') {
-	$GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][0] = '\\Terminal42\\FolderpageBundle\\DcaManager';
+    $GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0] = function ($varValue, DataContainer $dc) {
+        return \System::getContainer()
+            ->get('terminal42.folderpage.dcamanager')
+            ->checkRootType($varValue, $dc->activeRecord)
+        ;
+    };
 }
-
-
-

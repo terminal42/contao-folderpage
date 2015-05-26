@@ -2,148 +2,266 @@
 
 namespace Terminal42\FolderpageBundle;
 
-use Contao\DataContainer;
+use Contao\Backend;
+use Contao\CoreBundle\Exception\RedirectResponseException;
+use Contao\PageModel;
+use Doctrine\DBAL\Connection;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class DcaManager extends \tl_page
+class DcaManager
 {
+    /**
+     * @var Connection
+     */
+    private $db;
 
     /**
-     * Override the default breadcrumb menu, we want to show pages before root pages
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
+     * @var AttributeBagInterface
+     */
+    private $session;
+
+    /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
+     * @var \BackendUser
+     */
+    private $user;
+
+    /**
+     * Constructor.
+     *
+     * @param Connection       $db
+     * @param RequestStack     $requestStack
+     * @param SessionInterface $session
+     * @param RouterInterface  $router
+     */
+    public function __construct(
+        Connection $db,
+        RequestStack $requestStack,
+        SessionInterface $session,
+        RouterInterface $router,
+        TokenStorageInterface $tokenStorage
+    ) {
+        $this->db           = $db;
+        $this->requestStack = $requestStack;
+        $this->session      = $session->getBag('contao_backend');
+        $this->router       = $router;
+        $this->user         = $tokenStorage->getToken()->getUser();
+    }
+
+    /**
+     * Override the default breadcrumb menu, we want to show folder pages before root pages
      */
     public function addBreadcrumb()
     {
-        // Set a new node
-        if (isset($_GET['node'])) {
-            $this->Session->set('tl_page_node', $this->Input->get('node'));
-            $this->redirect(preg_replace('/&node=[^&]*/', '', $this->Environment->request));
-        }
+        $this->updateBreadcrumbNode();
 
-        $intNode = $this->Session->get('tl_page_node');
+        $nodeId = $this->session->get('tl_page_node');
 
-        if ($intNode < 1) {
+        if ($nodeId < 1) {
             return;
         }
 
-        $arrIds   = array();
-        $arrLinks = array();
+        $trail = $this->getBreadcrumbTrail($nodeId);
 
         // Generate breadcrumb trail
-        if ($intNode) {
-            $intId = $intNode;
-
-            do {
-                $objPage = $this->Database->prepare("SELECT * FROM tl_page WHERE id=?")
-                                          ->limit(1)
-                                          ->execute($intId);
-
-                if ($objPage->numRows < 1) {
-                    // Currently selected page does not exits
-                    if ($intId == $intNode) {
-                        $this->Session->set('tl_page_node', 0);
-
-                        return;
-                    }
-
-                    break;
-                }
-
-                $arrIds[] = $intId;
-
-                // No link for the active page
-                if ($objPage->id == $intNode) {
-                    $arrLinks[] = $this->addIcon($objPage->row(), '', null, '', true) . ' ' . $objPage->title;
-                } else {
-                    $arrLinks[] = $this->addIcon($objPage->row(), '', null, '', true) . ' <a href="' . $this->addToUrl('node=' . $objPage->id) . '">' . $objPage->title . '</a>';
-                }
-
-                // Do not show the mounted pages
-                if (!$this->User->isAdmin && $this->User->hasAccess($objPage->id, 'pagemounts')) {
-                    break;
-                }
-
-                $intId = $objPage->pid;
-            } while ($intId > 0);
+        if (empty($trail)) {
+            $this->session->set('tl_page_node', 0);
+            return;
         }
 
-        // Check whether the node is mounted
-        if (!$this->User->isAdmin && !$this->User->hasAccess($arrIds, 'pagemounts')) {
-            $this->Session->set('tl_page_node', 0);
-
-            $this->log('Page ID ' . $intNode . ' was not mounted', 'tl_page addBreadcrumb', TL_ERROR);
-            $this->redirect('contao/main.php?act=error');
-        }
-
-        // Limit tree
-        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['root'] = array($intNode);
-
-        // Add root link
-        $arrLinks[] = '<img src="system/themes/' . $this->getTheme() . '/images/pagemounts.gif" width="18" height="18" alt="" /> <a href="' . $this->addToUrl('node=0') . '">' . $GLOBALS['TL_LANG']['MSC']['filterAll'] . '</a>';
-        $arrLinks   = array_reverse($arrLinks);
-
-        // Insert breadcrumb menu
-        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['breadcrumb'] .= '
-
-<ul id="tl_breadcrumb">
-  <li>' . implode(' &gt; </li><li>', $arrLinks) . '</li>
-</ul>';
+        $this->checkTrailAccess($nodeId, $trail);
+        $this->buildBreadcrumb($nodeId, $trail);
     }
-
 
     /**
      * Make sure that top-level pages are root pages or folders
      *
-     * @param mixed
-     * @param DataContainer
+     * @param string $type
+     * @param object $activeRecord
      *
-     * @return mixed
+     * @return string
+     *
      * @throws \Exception
      */
-    public function checkRootType($varValue, DataContainer $dc)
+    public function checkRootType($type, $activeRecord)
     {
-        if ($varValue != 'root' && $varValue != 'folder' && $dc->activeRecord->pid == 0) {
+        if ($type != 'root' && $type != 'folder' && $activeRecord->pid == 0) {
             throw new \Exception($GLOBALS['TL_LANG']['ERR']['topLevelRoot']);
         }
 
-        return $varValue;
+        return $type;
     }
-
 
     /**
      * Show a warning if there is no language fallback page
      */
     public function showFallbackWarning()
     {
-        if ($this->Input->get('act') != '') {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($request->query->has('act')) {
             return;
         }
 
-        $this->import('Messages');
-        $this->addRawMessage($this->Messages->languageFallback());
+        $messages = \System::importStatic('Messages');
+        \Message::addRaw($messages->languageFallback());
 
-        $objCount = $this->Database->execute(
+        $result = $this->db->query(
             "SELECT COUNT(*) AS count FROM tl_page WHERE pid=0 AND type!='root' AND type!='folder'"
         );
 
-        if ($objCount->count > 0) {
-            $this->addRawMessage('<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>');
+        if ($result->fetchColumn() > 0) {
+            \Message::addRaw('<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>');
         }
     }
 
-
-    public function configureFolderPage($dc)
+    /**
+     * Sets fixed configuration for a folder page.
+     *
+     * @param int $id The tl_page record ID
+     */
+    public function configureFolderPage($id)
     {
-        if ($dc->activeRecord && $dc->activeRecord->type == 'folder') {
-            $arrSet = array
-            (
+        $this->db->update(
+            'tl_page',
+            [
                 'noSearch'  => '1',
                 'sitemap'   => 'map_never',
                 'hide'      => '1',
                 'published' => '1',
                 'start'     => '',
                 'stop'      => '',
+            ],
+            [
+                'id' => $id
+            ]
+        );
+    }
+
+    /**
+     * Sets a new node if input value is given
+     */
+    private function updateBreadcrumbNode()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($request->query->has('node')) {
+            $this->session->set('tl_page_node', (int) $request->query->get('node'));
+
+            $params = array_merge(
+                $request->get('_route_params'),
+                $request->query->all()
             );
 
-            $this->Database->prepare("UPDATE tl_page %s WHERE id=?")->set($arrSet)->execute($dc->id);
+            unset($params['node']);
+
+            throw new RedirectResponseException(
+                $this->router->generate(
+                    $request->get('_route'),
+                    $params
+                )
+            );
         }
+    }
+
+    /**
+     * @param $nodeId
+     *
+     * @return PageModel[]
+     */
+    private function getBreadcrumbTrail($nodeId)
+    {
+        $pages  = [];
+        $pageId = $nodeId;
+
+        do {
+            $page = PageModel::findByPk($pageId);
+
+            if (null === $page) {
+                // Currently selected page does not exits
+                if ($pageId == $nodeId) {
+                    return [];
+                }
+
+                break;
+            }
+
+            $pages[] = $page;
+
+            // Do not show the mounted pages
+            if (!$this->user->isAdmin && $this->user->hasAccess($page->id, 'pagemounts')) {
+                break;
+            }
+
+            $pageId = $page->pid;
+        } while ($pageId > 0);
+
+        return $pages;
+    }
+
+    /**
+     * @param int         $nodeId
+     * @param PageModel[] $trail
+     */
+    private function checkTrailAccess($nodeId, array $trail)
+    {
+        $trailIds = array_map(
+            function (PageModel $page) {
+                return $page->id;
+            },
+            $trail
+        );
+
+        // Check whether the node is mounted
+        if (!$this->user->isAdmin && !$this->user->hasAccess($trailIds, 'pagemounts')) {
+            $this->session->set('tl_page_node', 0);
+
+            \System::log('Page ID ' . $nodeId . ' was not mounted', 'tl_page addBreadcrumb', TL_ERROR);
+
+            throw new RedirectResponseException($this->router->generate('contao_backend', ['act'=>'error']));
+        }
+    }
+
+    /**
+     * @param int         $nodeId
+     * @param PageModel[] $trail
+     */
+    private function buildBreadcrumb($nodeId, array $trail)
+    {
+        foreach ($trail as $page) {
+            // No link for the active page
+            if ($page->id == $nodeId) {
+                $links[] = Backend::addPageIcon($page->row(), '', null, '', true) . ' ' . $page->title;
+            } else {
+                $links[] = Backend::addPageIcon($page->row(), '', null, '', true) . ' <a href="' . Backend::addToUrl('node=' . $page->id) . '">' . $page->title . '</a>';
+            }
+        }
+
+        // Limit tree
+        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['root'] = array($nodeId);
+
+        // Add root link
+        $links[] = '<img src="system/themes/' . Backend::getTheme() . '/images/pagemounts.gif" width="18" height="18" alt="" /> <a href="' . Backend::addToUrl('node=0') . '">' . $GLOBALS['TL_LANG']['MSC']['filterAll'] . '</a>';
+        $links   = array_reverse($links);
+
+        // Insert breadcrumb menu
+        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['breadcrumb'] .= '
+
+<ul id="tl_breadcrumb">
+  <li>' . implode(' &gt; </li><li>', $links) . '</li>
+</ul>';
     }
 }
