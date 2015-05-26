@@ -15,15 +15,12 @@
  */
 $GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = array('tl_page_folderpage', 'configureFolderPage');
 
-foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback)
-{
-	if ($callback[1] == 'addBreadcrumb')
-	{
+foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback) {
+	if ($callback[1] == 'addBreadcrumb') {
 		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = 'tl_page_folderpage';
 	}
 
-	if ($callback[1] == 'showFallbackWarning')
-	{
+	if ($callback[1] == 'showFallbackWarning') {
 		$GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k][0] = 'tl_page_folderpage';
 	}
 }
@@ -38,8 +35,7 @@ $GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type
 /**
  * Fields
  */
-if ($GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1] == 'checkRootType')
-{
+if ($GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1] == 'checkRootType') {
 	$GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][0] = 'tl_page_folderpage';
 }
 
