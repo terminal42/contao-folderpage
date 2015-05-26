@@ -128,13 +128,18 @@ class DcaManager
         $messages = \System::importStatic('Messages');
         \Message::addRaw($messages->languageFallback());
 
+        if ($this->hasInvalidTopLevels()) {
+            \Message::addRaw('<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>');
+        }
+    }
+
+    public function hasInvalidTopLevels()
+    {
         $result = $this->db->query(
             "SELECT COUNT(*) AS count FROM tl_page WHERE pid=0 AND type!='root' AND type!='folder'"
         );
 
-        if ($result->fetchColumn() > 0) {
-            \Message::addRaw('<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>');
-        }
+        return ($result->fetchColumn() > 0);
     }
 
     /**
