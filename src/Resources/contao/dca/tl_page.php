@@ -58,3 +58,10 @@ if ($GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1] == 'c
         ;
     };
 }
+
+$GLOBALS['TL_DCA']['tl_page']['fields']['published']['save_callback'][] = function ($varValue, $dc) {
+    return \System::getContainer()
+           ->get('terminal42.folderpage.dcamanager')
+           ->validatePublishState($varValue, $dc->type)
+    ;
+};

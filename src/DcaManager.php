@@ -166,6 +166,23 @@ class DcaManager
     }
 
     /**
+     * A folder page can never be unpublished.
+     *
+     * @param string $state
+     * @param string $pageType
+     *
+     * @return string
+     */
+    public function validatePublishState($state, $pageType)
+    {
+        if ('folder' === $pageType) {
+            return '1';
+        }
+
+        return $state;
+    }
+
+    /**
      * Sets a new node if input value is given
      */
     private function updateBreadcrumbNode()
