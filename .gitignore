@@ -13,3 +13,5 @@ nbproject/
 # Composer
 /vendor/
 /components/
+
+composer.lock

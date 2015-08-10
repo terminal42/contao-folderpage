@@ -8,7 +8,7 @@
  * @link       http://github.com/terminal42/contao-folderpage
  */
 
-namespace Terminal42\FolderpageBundle;
+namespace Terminal42\FolderpageBundle\DataContainer;
 
 use Contao\Backend;
 use Contao\CoreBundle\Exception\RedirectResponseException;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class DcaManager
+class Page
 {
     /**
      * @var Connection

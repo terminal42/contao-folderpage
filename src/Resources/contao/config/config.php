@@ -11,14 +11,15 @@
 /**
  * Page type
  */
-$GLOBALS['TL_PTY']['folder'] = 'PageFolder';
+$GLOBALS['TL_PTY']['folder'] = 'Terminal42\\FolderpageBundle\\PageType\\FolderPage';
 
 /**
  * Replace core Hooks
  */
 foreach( $GLOBALS['TL_HOOKS']['getSystemMessages'] as $k => $v ) {
 	if ($v[0] == 'Messages' && $v[1] == 'topLevelRoot') {
-		$GLOBALS['TL_HOOKS']['getSystemMessages'][$k][0] = '\\Terminal42\\FolderpageBundle\\HookManager';
+		$GLOBALS['TL_HOOKS']['getSystemMessages'][$k][0] = '\\Terminal42\\FolderpageBundle\\EventListener\\HookProxy';
+		$GLOBALS['TL_HOOKS']['getSystemMessages'][$k][1] = 'getSystemMessages';
         break;
 	}
 }
@@ -26,4 +27,4 @@ foreach( $GLOBALS['TL_HOOKS']['getSystemMessages'] as $k => $v ) {
 /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['getPageStatusIcon'][] = ['\\Terminal42\\FolderpageBundle\\HookManager', 'getFolderPageIcon'];
+$GLOBALS['TL_HOOKS']['getPageStatusIcon'][] = ['\\Terminal42\\FolderpageBundle\\EventListener\\HookProxy', 'getPageStatusIcon'];
