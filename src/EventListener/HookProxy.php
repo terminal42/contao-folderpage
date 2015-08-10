@@ -8,7 +8,7 @@
  * @link       http://github.com/terminal42/contao-folderpage
  */
 
-namespace Terminal42\FolderpageBundle;
+namespace Terminal42\FolderpageBundle\EventListener;
 
 class HookProxy
 {
