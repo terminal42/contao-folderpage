@@ -14,6 +14,7 @@
  * Config
  */
 $GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = array('tl_page_folderpage', 'configureFolderPage');
+$GLOBALS['TL_DCA']['tl_page']['fields']['alias']['save_callback'][] = array('tl_page_folderpage', 'adjustAlias');
 
 foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback)
 {
@@ -196,5 +197,50 @@ class tl_page_folderpage extends tl_page
 
 			$this->Database->prepare("UPDATE tl_page %s WHERE id=?")->set($arrSet)->execute($dc->id);
 		}
+	}
+
+	public function adjustAlias($value, $dc)
+	{
+		// Nothing to adjust if no folderUrls
+		if (!$GLOBALS['TL_CONFIG']['folderUrl']) {
+			return $value;
+		}
+
+		// First clean up all folder page aliases (as they might contain something)
+		\Database::getInstance()->prepare("UPDATE tl_page SET alias='' WHERE type=?")->execute('folder');
+
+		// If current page is of type folder, update children
+		if ($dc->activeRecord && $dc->activeRecord->type == 'folder') {
+			$childRecords = \Database::getInstance()->getChildRecords(array($dc->id), 'tl_page');
+			$this->updateChildren($childRecords);
+			return $value;
+		}
+
+		// Otherwise just clean the current one
+		return $this->cleanAlias($value);
+	}
+
+	private function updateChildren(array $ids)
+	{
+		if (empty($ids)) {
+			return;
+		}
+
+		// First clean up all folder page aliases (as they might contain something)
+		\Database::getInstance()->prepare("UPDATE tl_page SET alias='' WHERE type=?")->execute('folder');
+
+		foreach ($ids as $id) {
+
+			$alias = \Database::getInstance()->prepare('SELECT alias FROM tl_page WHERE id=?')->execute($id)->alias;
+
+			$alias = $this->cleanAlias($alias);
+
+			\Database::getInstance()->prepare('UPDATE tl_page SET alias=? WHERE id=?')->execute($alias, $id);
+		}
+	}
+
+	private function cleanAlias($alias)
+	{
+		return ltrim(preg_replace('@/+@', '/', $alias), '/');
 	}
 }
