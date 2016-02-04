@@ -86,32 +86,13 @@ class Page
         $trail = $this->getBreadcrumbTrail($nodeId);
 
         // Generate breadcrumb trail
-        if (empty($trail)) {
+        if (0 === count($trail)) {
             $this->session->set('tl_page_node', 0);
             return;
         }
 
         $this->checkTrailAccess($nodeId, $trail);
         $this->buildBreadcrumb($nodeId, $trail);
-    }
-
-    /**
-     * Make sure that top-level pages are root pages or folders
-     *
-     * @param string $type
-     * @param object $activeRecord
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public function checkRootType($type, $activeRecord)
-    {
-        if ($type != 'root' && $type != 'folder' && $activeRecord->pid == 0) {
-            throw new \Exception($GLOBALS['TL_LANG']['ERR']['topLevelRoot']);
-        }
-
-        return $type;
     }
 
     /**
@@ -145,10 +126,14 @@ class Page
     /**
      * Sets fixed configuration for a folder page.
      *
-     * @param int $id The tl_page record ID
+     * @param \Contao\DataContainer $dc
      */
-    public function configureFolderPage($id)
+    public function configureFolderPage($dc)
     {
+        if (null === $dc->activeRecord || 'folder' !== $dc->activeRecord->type) {
+            return;
+        }
+
         $this->db->update(
             'tl_page',
             [
@@ -160,26 +145,44 @@ class Page
                 'stop'      => '',
             ],
             [
-                'id' => $id
+                'id' => $dc->id
             ]
         );
     }
 
     /**
+     * Make sure that top-level pages are root pages or folders
+     *
+     * @param string                $value
+     * @param \Contao\DataContainer $dc
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function onSaveType($value, $dc)
+    {
+        if ('root' !== $value && 'folder' !== $value && $dc->activeRecord->pid == 0) {
+            throw new \Exception($GLOBALS['TL_LANG']['ERR']['topLevelRoot']);
+        }
+
+        return $value;
+    }
+
+    /**
      * A folder page can never be unpublished.
      *
-     * @param string $state
-     * @param string $pageType
+     * @param string                $value
+     * @param \Contao\DataContainer $dc
      *
      * @return string
      */
-    public function validatePublishState($state, $pageType)
+    public function onSavePublished($value, $dc)
     {
-        if ('folder' === $pageType) {
+        if (null !== $dc->activeRecord && 'folder' === $dc->activeRecord->type) {
             return '1';
         }
 
-        return $state;
+        return $value;
     }
 
     /**

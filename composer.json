@@ -1,6 +1,6 @@
 {
     "name": "terminal42/contao-folderpage",
-    "type": "contao-module",
+    "type": "contao-bundle",
     "description": "Contao Open Source CMS extension folderpage",
     "keywords": ["contao", "folder", "page", "folderpage"],
     "license": "LGPL-3.0+",
@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "contao/core-bundle": "4.*"
+        "contao/core-bundle": "~4.1"
     },
     "replace": {
         "contao-legacy/folderpage": "self.version"
@@ -26,7 +26,5 @@
         "branch-alias": {
             "dev-develop": "2.0.x-dev"
         }
-    },
-    "prefer-stable": true,
-    "minimum-stability": "dev"
+    }
 }

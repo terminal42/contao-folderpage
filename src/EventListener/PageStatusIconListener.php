@@ -20,9 +20,9 @@ class PageStatusIconListener
      *
      * @return string
      */
-    public function getFolderpageIcon($page, $image)
+    public function onGetPageStatusIcon($page, $image)
     {
-        if ($page->type == 'folder') {
+        if ('folder' === $page->type) {
             return 'bundles/terminal42folderpage/folder.gif';
         }
 

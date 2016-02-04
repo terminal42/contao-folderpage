@@ -34,7 +34,7 @@ class SystemMessagesListener
      *
      * @return string
      */
-    public function topLevelRoot()
+    public function onGetSystemMessages()
     {
         if ($this->page->hasInvalidTopLevels()) {
             return '<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>';

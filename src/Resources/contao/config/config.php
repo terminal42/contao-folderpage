@@ -17,9 +17,9 @@ $GLOBALS['TL_PTY']['folder'] = 'Terminal42\\FolderpageBundle\\PageType\\FolderPa
  * Replace core Hooks
  */
 foreach( $GLOBALS['TL_HOOKS']['getSystemMessages'] as $k => $v ) {
-	if ($v[0] == 'Messages' && $v[1] == 'topLevelRoot') {
-		$GLOBALS['TL_HOOKS']['getSystemMessages'][$k][0] = '\\Terminal42\\FolderpageBundle\\EventListener\\HookProxy';
-		$GLOBALS['TL_HOOKS']['getSystemMessages'][$k][1] = 'getSystemMessages';
+	if ('Messages' === $v[0] && 'topLevelRoot' === $v[1]) {
+		$GLOBALS['TL_HOOKS']['getSystemMessages'][$k][0] = 'terminal42_folderpage.listener.system_messages';
+		$GLOBALS['TL_HOOKS']['getSystemMessages'][$k][1] = 'onGetSystemMessages';
         break;
 	}
 }
@@ -27,4 +27,4 @@ foreach( $GLOBALS['TL_HOOKS']['getSystemMessages'] as $k => $v ) {
 /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['getPageStatusIcon'][] = ['\\Terminal42\\FolderpageBundle\\EventListener\\HookProxy', 'getPageStatusIcon'];
+$GLOBALS['TL_HOOKS']['getPageStatusIcon'][] = ['terminal42_folderpage.listener.page_status_icon', 'onGetPageStatusIcon'];
