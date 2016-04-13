@@ -15,6 +15,7 @@
  */
 $GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = array('tl_page_folderpage', 'configureFolderPage');
 $GLOBALS['TL_DCA']['tl_page']['fields']['alias']['save_callback'][] = array('tl_page_folderpage', 'adjustAlias');
+array_unshift($GLOBALS['TL_DCA']['tl_page']['fields']['alias']['save_callback'], array('tl_page_folderpage', 'emptyFolderAliases'));
 
 foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback)
 {
@@ -199,15 +200,20 @@ class tl_page_folderpage extends tl_page
 		}
 	}
 
+	public function emptyFolderAliases($value)
+	{
+		// Clean up all folder page aliases (as they might contain something)
+		\Database::getInstance()->prepare("UPDATE tl_page SET alias='' WHERE type=?")->execute('folder');
+
+		return $value;
+	}
+
 	public function adjustAlias($value, $dc)
 	{
 		// Nothing to adjust if no folderUrls
 		if (!$GLOBALS['TL_CONFIG']['folderUrl']) {
 			return $value;
 		}
-
-		// First clean up all folder page aliases (as they might contain something)
-		\Database::getInstance()->prepare("UPDATE tl_page SET alias='' WHERE type=?")->execute('folder');
 
 		// If current page is of type folder, update children
 		if ($dc->activeRecord && $dc->activeRecord->type == 'folder') {
