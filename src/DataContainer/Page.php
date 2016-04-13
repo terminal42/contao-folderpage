@@ -11,7 +11,9 @@
 namespace Terminal42\FolderpageBundle\DataContainer;
 
 use Contao\Backend;
+use Contao\Config;
 use Contao\CoreBundle\Exception\RedirectResponseException;
+use Contao\Database;
 use Contao\PageModel;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -297,5 +299,77 @@ class Page
 <ul id="tl_breadcrumb">
   <li>' . implode(' &gt; </li><li>', $links) . '</li>
 </ul>';
+    }
+
+    /**
+     * Clean up all folder page aliases (as they might contain something)
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function emptyFolderAliases($value)
+    {
+        $this->db->update('tl_page', ['alias' => ''], ['type' => 'folder']);
+
+        return $value;
+    }
+
+    /**
+     * Adjust the alias of the page
+     *
+     * @param string                $value
+     * @param \Contao\DataContainer $dc
+     *
+     * @return string
+     */
+    public function adjustAlias($value, $dc)
+    {
+        // Nothing to adjust if no folderUrls
+        if (!Config::get('folderUrl')) {
+            return $value;
+        }
+
+        // If current page is of type folder, update children
+        if ($dc->activeRecord && $dc->activeRecord->type === 'folder') {
+            $childRecords = Database::getInstance()->getChildRecords([$dc->id], 'tl_page');
+            $this->updateChildren($childRecords);
+
+            return $value;
+        }
+
+        // Otherwise just clean the current one
+        return $this->cleanAlias($value);
+    }
+
+    /**
+     * Update the children pages
+     *
+     * @param array $ids
+     */
+    private function updateChildren(array $ids)
+    {
+        if (count($ids) < 1) {
+            return;
+        }
+
+        foreach ($ids as $id) {
+            $alias = $this->db->fetchColumn('SELECT alias FROM tl_page WHERE id=?', [$id]);
+            $alias = $this->cleanAlias($alias);
+
+            $this->db->update('tl_page', ['alias' => $alias], ['id' => $id]);
+        }
+    }
+
+    /**
+     * Clean the alias
+     *
+     * @param string $alias
+     *
+     * @return string
+     */
+    private function cleanAlias($alias)
+    {
+        return ltrim(preg_replace('@/+@', '/', $alias), '/');
     }
 }
