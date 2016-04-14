@@ -222,8 +222,22 @@ class tl_page_folderpage extends tl_page
 			return $value;
 		}
 
-		// Otherwise just clean the current one
-		return $this->cleanAlias($value);
+		$tl_page = new \tl_page();
+
+		// Clean the alias
+		$value = $this->cleanAlias($value);
+
+		try {
+			$value = $tl_page->generateAlias($value, $dc);
+		} catch (\Exception $e) {
+			// The alias already exists so add ID just like the original method would
+			$value = $value.'-'.$dc->id;
+
+			// Validate the alias once again and throw an error if it exists
+			$value = $tl_page->generateAlias($value, $dc);
+		}
+
+		return $value;
 	}
 
 	private function updateChildren(array $ids)
