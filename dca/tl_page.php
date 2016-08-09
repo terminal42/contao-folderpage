@@ -45,6 +45,8 @@ if ($GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1] == 'c
 	$GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][0] = 'tl_page_folderpage';
 }
 
+$GLOBALS['TL_DCA']['tl_page']['fields']['type']['options_callback'][0] = 'tl_page_folderpage';
+
 
 class tl_page_folderpage extends tl_page
 {
@@ -181,6 +183,47 @@ class tl_page_folderpage extends tl_page
 		}
 	}
 
+    /**
+     * Returns all allowed page types as array
+     *
+     * @param DataContainer $dc
+     *
+     * @return string
+     */
+    public function getPageTypes(DataContainer $dc)
+    {
+        $arrOptions = array();
+        $rootAllowed = true;
+
+        if ($dc->activeRecord->pid > 0) {
+            $rootAllowed = false;
+            $parent = $this->Database->prepare("SELECT type FROM tl_page WHERE id=?")
+                ->limit(1)
+                ->execute($dc->activeRecord->pid);
+
+            // Allow root in second level if the parent is folder
+            if ($parent->numRows && $parent->type === 'folder') {
+                $rootAllowed = true;
+            }
+        }
+
+        foreach (array_keys($GLOBALS['TL_PTY']) as $pty)
+        {
+            // Root pages are allowed on the first level only (see #6360)
+            if ($pty == 'root' && !$rootAllowed)
+            {
+                continue;
+            }
+
+            // Allow the currently selected option and anything the user has access to
+            if ($pty == $dc->value || $this->User->hasAccess($pty, 'alpty'))
+            {
+                $arrOptions[] = $pty;
+            }
+        }
+
+        return $arrOptions;
+    }
 
 	public function configureFolderPage($dc)
 	{
