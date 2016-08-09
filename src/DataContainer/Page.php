@@ -388,4 +388,41 @@ class Page
     {
         return ltrim(preg_replace('@/+@', '/', $alias), '/');
     }
+
+    /**
+     * Returns all allowed page types as array
+     *
+     * @param \Contao\DataContainer $dc
+     *
+     * @return string
+     */
+    public function getPageTypes($dc)
+    {
+        $options = [];
+        $rootAllowed = true;
+
+        if ($dc->activeRecord->pid > 0) {
+            $rootAllowed = false;
+            $parentType  = $this->db->fetchColumn('SELECT type FROM tl_page WHERE id=?', [$dc->activeRecord->pid]);
+
+            // Allow root in second level if the parent is folder
+            if ($parentType === 'folder') {
+                $rootAllowed = true;
+            }
+        }
+
+        foreach (array_keys($GLOBALS['TL_PTY']) as $pty) {
+            // Root pages are allowed on the first level only (see #6360)
+            if ($pty == 'root' && !$rootAllowed) {
+                continue;
+            }
+
+            // Allow the currently selected option and anything the user has access to
+            if ($pty == $dc->value || $this->user->hasAccess($pty, 'alpty')) {
+                $options[] = $pty;
+            }
+        }
+
+        return $options;
+    }
 }
