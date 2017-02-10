@@ -19,10 +19,11 @@ class FolderPage extends PageRegular
      * Generate a 404 page if this page is rendered in the frontend.
      *
      * @param \PageModel $objPage
+     * @param boolean    $blnCheckRequest
      *
      * @throws PageNotFoundException
      */
-    public function generate($objPage)
+    public function generate($objPage, $blnCheckRequest=false)
     {
         throw new PageNotFoundException();
     }
