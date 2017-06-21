@@ -15,10 +15,13 @@
         "contao/core-bundle": "~4.1"
     },
     "require-dev": {
-        "contao/manager-plugin": "~1.0"
+        "contao/manager-plugin": "^2.0"
     },
     "replace": {
         "contao-legacy/folderpage": "self.version"
+    },
+    "conflict": {
+        "contao/manager-plugin": "<2.0 || >=3.0"
     },
     "autoload": {
         "psr-4": {
@@ -26,9 +29,6 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "dev-develop": "2.0.x-dev"
-        },
         "contao-manager-plugin": "Terminal42\\FolderpageBundle\\ContaoManager\\Plugin"
     }
 }
