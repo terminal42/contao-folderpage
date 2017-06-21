@@ -1,0 +1,17 @@
+services:
+    terminal42_folderpage.datacontainer.page:
+        class: Terminal42\FolderpageBundle\DataContainer\Page
+        arguments:
+            - '@database_connection'
+            - '@request_stack'
+            - '@session'
+            - '@router'
+            - '@security.token_storage'
+
+    terminal42_folderpage.listener.page_status_icon:
+        class: Terminal42\FolderpageBundle\EventListener\PageStatusIconListener
+
+    terminal42_folderpage.listener.system_messages:
+        class: Terminal42\FolderpageBundle\EventListener\SystemMessagesListener
+        arguments:
+            - '@terminal42_folderpage.datacontainer.page'

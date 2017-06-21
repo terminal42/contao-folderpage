@@ -1,9 +1,9 @@
 {
     "name": "terminal42/contao-folderpage",
-    "type": "contao-module",
+    "type": "contao-bundle",
     "description": "Contao Open Source CMS extension folderpage",
     "keywords": ["contao", "folder", "page", "folderpage"],
-    "license": "LGPL",
+    "license": "LGPL-3.0+",
     "authors":[
         {
             "name":"terminal42 gmbh",
@@ -11,34 +11,24 @@
         }
     ],
     "require": {
-        "php": ">=5.3.7",
-        "contao/core": ">=3.2.5,<4",
-        "contao-community-alliance/composer-plugin": "2.*"
+        "php": ">=5.4.0",
+        "contao/core-bundle": "~4.1"
+    },
+    "require-dev": {
+        "contao/manager-plugin": "^2.0"
     },
     "replace": {
         "contao-legacy/folderpage": "self.version"
     },
-    "extra": {
-        "contao": {
-            "sources": {
-                "": "system/modules/folderpage",
-                "themes/default/images/folder.gif":    "system/themes/default/images/folder.gif",
-                "themes/default/images/folder_1.gif":  "system/themes/default/images/folder_1.gif",
-                "themes/default/images/folder_2.gif":  "system/themes/default/images/folder_2.gif",
-                "themes/default/images/folder_3.gif":  "system/themes/default/images/folder_3.gif",
-                "themes/default/images/folder_4.gif":  "system/themes/default/images/folder_4.gif",
-                "themes/default/images/folder_5.gif":  "system/themes/default/images/folder_5.gif",
-                "themes/default/images/folder_6.gif":  "system/themes/default/images/folder_6.gif",
-                "themes/default/images/folder_7.gif":  "system/themes/default/images/folder_7.gif",
-                "themes/flexible/images/folder.gif":   "system/themes/flexible/images/folder.gif",
-                "themes/flexible/images/folder_1.gif": "system/themes/flexible/images/folder_1.gif",
-                "themes/flexible/images/folder_2.gif": "system/themes/flexible/images/folder_2.gif",
-                "themes/flexible/images/folder_3.gif": "system/themes/flexible/images/folder_3.gif",
-                "themes/flexible/images/folder_4.gif": "system/themes/flexible/images/folder_4.gif",
-                "themes/flexible/images/folder_5.gif": "system/themes/flexible/images/folder_5.gif",
-                "themes/flexible/images/folder_6.gif": "system/themes/flexible/images/folder_6.gif",
-                "themes/flexible/images/folder_7.gif": "system/themes/flexible/images/folder_7.gif"
-            }
+    "conflict": {
+        "contao/manager-plugin": "<2.0 || >=3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Terminal42\\FolderpageBundle\\": "src/"
         }
+    },
+    "extra": {
+        "contao-manager-plugin": "Terminal42\\FolderpageBundle\\ContaoManager\\Plugin"
     }
 }
