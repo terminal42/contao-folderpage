@@ -252,7 +252,7 @@ class Page
      *
      * @param \Contao\DataContainer $dc
      *
-     * @return string
+     * @return array
      */
     public function getPageTypes($dc)
     {
