@@ -1,19 +1,20 @@
 <?php
 
-/**
+/*
  * folderpage extension for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2012-2015, terminal42 gmbh
+ * @copyright  Copyright (c) 2017, terminal42 gmbh
+ * @author     terminal42 gmbh <info@terminal42.ch>
  * @license    LGPL-3.0+
  * @link       http://github.com/terminal42/contao-folderpage
  */
 
-/**
- * Page types
+/*
+ * Page types.
  */
 $GLOBALS['TL_LANG']['PTY']['folder'] = 'Folder';
 
-/**
+/*
  * Miscellaneous
  */
 $GLOBALS['TL_LANG']['ERR']['topLevelRoot'] = 'Top-level pages must be website root pages or folders!';

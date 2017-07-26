@@ -1,9 +1,10 @@
 <?php
 
-/**
+/*
  * folderpage extension for Contao Open Source CMS
  *
- * @copyright  Copyright (c) 2012-2015, terminal42 gmbh
+ * @copyright  Copyright (c) 2017, terminal42 gmbh
+ * @author     terminal42 gmbh <info@terminal42.ch>
  * @license    LGPL-3.0+
  * @link       http://github.com/terminal42/contao-folderpage
  */
@@ -65,15 +66,15 @@ class Page
         RouterInterface $router,
         TokenStorageInterface $tokenStorage
     ) {
-        $this->db           = $db;
+        $this->db = $db;
         $this->requestStack = $requestStack;
-        $this->session      = $session->getBag('contao_backend');
-        $this->router       = $router;
-        $this->user         = $tokenStorage->getToken()->getUser();
+        $this->session = $session->getBag('contao_backend');
+        $this->router = $router;
+        $this->user = $tokenStorage->getToken()->getUser();
     }
 
     /**
-     * Override the default breadcrumb menu, we want to show folder pages before root pages
+     * Override the default breadcrumb menu, we want to show folder pages before root pages.
      */
     public function addBreadcrumb()
     {
@@ -90,6 +91,7 @@ class Page
         // Generate breadcrumb trail
         if (0 === count($trail)) {
             $this->session->set('tl_page_node', 0);
+
             return;
         }
 
@@ -98,7 +100,7 @@ class Page
     }
 
     /**
-     * Show a warning if there is no language fallback page
+     * Show a warning if there is no language fallback page.
      */
     public function showFallbackWarning()
     {
@@ -112,7 +114,7 @@ class Page
         \Message::addRaw($messages->languageFallback());
 
         if ($this->hasInvalidTopLevels()) {
-            \Message::addRaw('<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['topLevelRegular'] . '</p>');
+            \Message::addRaw('<p class="tl_error">'.$GLOBALS['TL_LANG']['ERR']['topLevelRegular'].'</p>');
         }
     }
 
@@ -122,7 +124,7 @@ class Page
             "SELECT COUNT(*) AS count FROM tl_page WHERE pid=0 AND type!='root' AND type!='folder'"
         );
 
-        return ($result->fetchColumn() > 0);
+        return $result->fetchColumn() > 0;
     }
 
     /**
@@ -139,31 +141,32 @@ class Page
         $this->db->update(
             'tl_page',
             [
-                'noSearch'  => '1',
-                'sitemap'   => 'map_never',
-                'hide'      => '1',
+                'noSearch' => '1',
+                'sitemap' => 'map_never',
+                'hide' => '1',
                 'published' => '1',
-                'start'     => '',
-                'stop'      => '',
+                'start' => '',
+                'stop' => '',
             ],
             [
-                'id' => $dc->id
+                'id' => $dc->id,
             ]
         );
     }
 
     /**
-     * Make sure that top-level pages are root pages or folders
+     * Make sure that top-level pages are root pages or folders.
      *
      * @param string                $value
      * @param \Contao\DataContainer $dc
      *
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     public function onSaveType($value, $dc)
     {
-        if ('root' !== $value && 'folder' !== $value && $dc->activeRecord->pid == 0) {
+        if ('root' !== $value && 'folder' !== $value && $dc->activeRecord->pid === 0) {
             throw new \Exception($GLOBALS['TL_LANG']['ERR']['topLevelRoot']);
         }
 
@@ -188,7 +191,101 @@ class Page
     }
 
     /**
-     * Sets a new node if input value is given
+     * Clean up all folder page aliases (as they might contain something).
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function emptyFolderAliases($value)
+    {
+        $this->db->update('tl_page', ['alias' => ''], ['type' => 'folder']);
+
+        return $value;
+    }
+
+    /**
+     * Adjust the alias of the page.
+     *
+     * @param string                $value
+     * @param \Contao\DataContainer $dc
+     *
+     * @throws \Exception
+     *
+     * @return string
+     */
+    public function adjustAlias($value, $dc)
+    {
+        // Nothing to adjust if no folderUrls
+        if (!Config::get('folderUrl')) {
+            return $value;
+        }
+
+        // If current page is of type folder, update children
+        if ($dc->activeRecord && $dc->activeRecord->type === 'folder') {
+            $childRecords = Database::getInstance()->getChildRecords([$dc->id], 'tl_page');
+            $this->updateChildren($childRecords);
+
+            return $value;
+        }
+
+        $tl_page = new \tl_page();
+
+        // Clean the alias
+        $value = $this->cleanAlias($value);
+
+        try {
+            $value = $tl_page->generateAlias($value, $dc);
+        } catch (\Exception $e) {
+            // The alias already exists so add ID just like the original method would
+            $value = $value.'-'.$dc->id;
+
+            // Validate the alias once again and throw an error if it exists
+            $value = $tl_page->generateAlias($value, $dc);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Returns all allowed page types as array.
+     *
+     * @param \Contao\DataContainer $dc
+     *
+     * @return array
+     */
+    public function getPageTypes($dc)
+    {
+        $options = [];
+        $rootAllowed = true;
+
+        if ($dc->activeRecord->pid > 0) {
+            $rootAllowed = false;
+            $parentType = $this->db->fetchColumn('SELECT type FROM tl_page WHERE id=?', [$dc->activeRecord->pid]);
+
+            // Allow root in second level if the parent is folder
+            if ($parentType === 'folder') {
+                $rootAllowed = true;
+            }
+        }
+
+        foreach (array_keys($GLOBALS['TL_PTY']) as $pty) {
+            // Root pages are allowed on the first level only (see #6360)
+            if ($pty === 'root' && !$rootAllowed) {
+                continue;
+            }
+
+            // Allow the currently selected option and anything the user has access to
+            if ($pty === $dc->value || $this->user->hasAccess($pty, 'alpty')) {
+                $options[] = $pty;
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * Sets a new node if input value is given.
      */
     private function updateBreadcrumbNode()
     {
@@ -220,7 +317,7 @@ class Page
      */
     private function getBreadcrumbTrail($nodeId)
     {
-        $pages  = [];
+        $pages = [];
         $pageId = $nodeId;
 
         do {
@@ -228,7 +325,7 @@ class Page
 
             if (null === $page) {
                 // Currently selected page does not exits
-                if ($pageId == $nodeId) {
+                if ($pageId === $nodeId) {
                     return [];
                 }
 
@@ -265,9 +362,9 @@ class Page
         if (!$this->user->isAdmin && !$this->user->hasAccess($trailIds, 'pagemounts')) {
             $this->session->set('tl_page_node', 0);
 
-            \System::log('Page ID ' . $nodeId . ' was not mounted', 'tl_page addBreadcrumb', TL_ERROR);
+            \System::log('Page ID '.$nodeId.' was not mounted', 'tl_page addBreadcrumb', TL_ERROR);
 
-            throw new RedirectResponseException($this->router->generate('contao_backend', ['act'=>'error']));
+            throw new RedirectResponseException($this->router->generate('contao_backend', ['act' => 'error']));
         }
     }
 
@@ -279,87 +376,30 @@ class Page
     {
         foreach ($trail as $page) {
             // No link for the active page
-            if ($page->id == $nodeId) {
-                $links[] = Backend::addPageIcon($page->row(), '', null, '', true) . ' ' . $page->title;
+            if ($page->id === $nodeId) {
+                $links[] = Backend::addPageIcon($page->row(), '', null, '', true).' '.$page->title;
             } else {
-                $links[] = Backend::addPageIcon($page->row(), '', null, '', true) . ' <a href="' . Backend::addToUrl('node=' . $page->id) . '">' . $page->title . '</a>';
+                $links[] = Backend::addPageIcon($page->row(), '', null, '', true).' <a href="'.Backend::addToUrl('pn='.$page->id).'">'.$page->title.'</a>';
             }
         }
 
         // Limit tree
-        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['root'] = array($nodeId);
+        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['root'] = [$nodeId];
 
         // Add root link
-        $links[] = '<img src="system/themes/' . Backend::getTheme() . '/images/pagemounts.gif" width="18" height="18" alt="" /> <a href="' . Backend::addToUrl('node=0') . '">' . $GLOBALS['TL_LANG']['MSC']['filterAll'] . '</a>';
-        $links   = array_reverse($links);
+        $links[] = \Image::getHtml('pagemounts.svg').' <a href="'.\Backend::addToUrl('pn=0').'" title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">'.$GLOBALS['TL_LANG']['MSC']['filterAll'].'</a>';
+        $links = array_reverse($links);
 
         // Insert breadcrumb menu
         $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['breadcrumb'] .= '
 
 <ul id="tl_breadcrumb">
-  <li>' . implode(' &gt; </li><li>', $links) . '</li>
+  <li>'.implode(' &gt; </li><li>', $links).'</li>
 </ul>';
     }
 
     /**
-     * Clean up all folder page aliases (as they might contain something)
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function emptyFolderAliases($value)
-    {
-        $this->db->update('tl_page', ['alias' => ''], ['type' => 'folder']);
-
-        return $value;
-    }
-
-    /**
-     * Adjust the alias of the page
-     *
-     * @param string                $value
-     * @param \Contao\DataContainer $dc
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public function adjustAlias($value, $dc)
-    {
-        // Nothing to adjust if no folderUrls
-        if (!Config::get('folderUrl')) {
-            return $value;
-        }
-
-        // If current page is of type folder, update children
-        if ($dc->activeRecord && $dc->activeRecord->type === 'folder') {
-            $childRecords = Database::getInstance()->getChildRecords([$dc->id], 'tl_page');
-            $this->updateChildren($childRecords);
-
-            return $value;
-        }
-
-        $tl_page = new \tl_page();
-
-        // Clean the alias
-        $value = $this->cleanAlias($value);
-
-        try {
-            $value = $tl_page->generateAlias($value, $dc);
-        } catch (\Exception $e) {
-            // The alias already exists so add ID just like the original method would
-            $value = $value.'-'.$dc->id;
-
-            // Validate the alias once again and throw an error if it exists
-            $value = $tl_page->generateAlias($value, $dc);
-        }
-
-        return $value;
-    }
-
-    /**
-     * Update the children pages
+     * Update the children pages.
      *
      * @param array $ids
      */
@@ -378,7 +418,7 @@ class Page
     }
 
     /**
-     * Clean the alias
+     * Clean the alias.
      *
      * @param string $alias
      *
@@ -387,42 +427,5 @@ class Page
     private function cleanAlias($alias)
     {
         return ltrim(preg_replace('@/+@', '/', $alias), '/');
-    }
-
-    /**
-     * Returns all allowed page types as array
-     *
-     * @param \Contao\DataContainer $dc
-     *
-     * @return string
-     */
-    public function getPageTypes($dc)
-    {
-        $options = [];
-        $rootAllowed = true;
-
-        if ($dc->activeRecord->pid > 0) {
-            $rootAllowed = false;
-            $parentType  = $this->db->fetchColumn('SELECT type FROM tl_page WHERE id=?', [$dc->activeRecord->pid]);
-
-            // Allow root in second level if the parent is folder
-            if ($parentType === 'folder') {
-                $rootAllowed = true;
-            }
-        }
-
-        foreach (array_keys($GLOBALS['TL_PTY']) as $pty) {
-            // Root pages are allowed on the first level only (see #6360)
-            if ($pty == 'root' && !$rootAllowed) {
-                continue;
-            }
-
-            // Allow the currently selected option and anything the user has access to
-            if ($pty == $dc->value || $this->user->hasAccess($pty, 'alpty')) {
-                $options[] = $pty;
-            }
-        }
-
-        return $options;
     }
 }
