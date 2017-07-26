@@ -379,7 +379,7 @@ class Page
             if ($page->id === $nodeId) {
                 $links[] = Backend::addPageIcon($page->row(), '', null, '', true).' '.$page->title;
             } else {
-                $links[] = Backend::addPageIcon($page->row(), '', null, '', true).' <a href="'.Backend::addToUrl('node='.$page->id).'">'.$page->title.'</a>';
+                $links[] = Backend::addPageIcon($page->row(), '', null, '', true).' <a href="'.Backend::addToUrl('pn='.$page->id).'">'.$page->title.'</a>';
             }
         }
 
@@ -387,7 +387,7 @@ class Page
         $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['root'] = [$nodeId];
 
         // Add root link
-        $links[] = '<img src="system/themes/'.Backend::getTheme().'/images/pagemounts.gif" width="18" height="18" alt="" /> <a href="'.Backend::addToUrl('node=0').'">'.$GLOBALS['TL_LANG']['MSC']['filterAll'].'</a>';
+        $links[] = \Image::getHtml('pagemounts.svg').' <a href="'.\Backend::addToUrl('pn=0').'" title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">'.$GLOBALS['TL_LANG']['MSC']['filterAll'].'</a>';
         $links = array_reverse($links);
 
         // Insert breadcrumb menu
