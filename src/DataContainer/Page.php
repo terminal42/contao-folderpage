@@ -194,15 +194,15 @@ class Page
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        if ($request->query->has('node')) {
-            $this->session->set('tl_page_node', (int) $request->query->get('node'));
+        if ($request->query->has('pn')) {
+            $this->session->set('tl_page_node', (int) $request->query->get('pn'));
 
             $params = array_merge(
                 $request->get('_route_params'),
                 $request->query->all()
             );
 
-            unset($params['node']);
+            unset($params['pn']);
 
             throw new RedirectResponseException(
                 $this->router->generate(
