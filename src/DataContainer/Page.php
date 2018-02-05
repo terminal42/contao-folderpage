@@ -141,6 +141,7 @@ class Page
         $this->db->update(
             'tl_page',
             [
+                'alias' => '',
                 'noSearch' => '1',
                 'sitemap' => 'map_never',
                 'published' => '1',
