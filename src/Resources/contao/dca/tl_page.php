@@ -27,7 +27,7 @@ foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 /*
  * Palettes
  */
-$GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type;{protected_legend:hide},protected;{layout_legend:hide},includeLayout;{cache_legend:hide},includeCache;{chmod_legend:hide},includeChmod;{expert_legend:hide},guests';
+$GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type;{protected_legend:hide},protected;{layout_legend:hide},includeLayout;{cache_legend:hide},includeCache;{chmod_legend:hide},includeChmod;{expert_legend:hide},cssClass,hide,guests';
 
 /*
  * Fields
@@ -41,3 +41,5 @@ $GLOBALS['TL_DCA']['tl_page']['fields']['type']['options_callback'][0] = 'termin
 $GLOBALS['TL_DCA']['tl_page']['fields']['published']['save_callback'][] = ['terminal42_folderpage.datacontainer.page', 'onSavePublished'];
 $GLOBALS['TL_DCA']['tl_page']['fields']['alias']['save_callback'][] = ['terminal42_folderpage.datacontainer.page', 'adjustAlias'];
 array_unshift($GLOBALS['TL_DCA']['tl_page']['fields']['alias']['save_callback'], ['terminal42_folderpage.datacontainer.page', 'emptyFolderAliases']);
+
+$GLOBALS['TL_DCA']['tl_page']['fields']['hide']['eval']['tl_class'] = 'clr w50';

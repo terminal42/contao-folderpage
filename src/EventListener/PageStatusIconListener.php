@@ -24,7 +24,7 @@ class PageStatusIconListener
     public function onGetPageStatusIcon($page, $image)
     {
         if ('folder' === $page->type) {
-            return 'bundles/terminal42folderpage/folder.gif';
+            return 'folderC.svg';
         }
 
         return $image;
