@@ -15,7 +15,7 @@
 $GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = ['terminal42_folderpage.datacontainer.page', 'configureFolderPage'];
 
 foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback) {
-    if (\is_callable($callback)) {
+    if (!\is_array($callback)) {
         continue;
     }
 
