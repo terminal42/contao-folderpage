@@ -15,6 +15,10 @@
 $GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = ['terminal42_folderpage.datacontainer.page', 'configureFolderPage'];
 
 foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback) {
+    if (!\is_array($callback)) {
+        continue;
+    }
+
     if ('addBreadcrumb' === $callback[1]) {
         $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = ['terminal42_folderpage.datacontainer.page', 'addBreadcrumb'];
     }
