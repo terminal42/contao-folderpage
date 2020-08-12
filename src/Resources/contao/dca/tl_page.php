@@ -31,7 +31,7 @@ foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 /*
  * Palettes
  */
-$GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type;{protected_legend:hide},protected;{layout_legend:hide},includeLayout;{cache_legend:hide},includeCache;{chmod_legend:hide},includeChmod;{expert_legend:hide},cssClass,hide,guests';
+$GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type;{meta_legend},pageTitle;{protected_legend:hide},protected;{layout_legend:hide},includeLayout;{cache_legend:hide},includeCache;{chmod_legend:hide},includeChmod;{expert_legend:hide},cssClass,hide,guests';
 
 /*
  * Fields
