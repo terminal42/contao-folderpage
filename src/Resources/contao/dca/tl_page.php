@@ -42,7 +42,6 @@ if ('checkRootType' === $GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_ca
 
 $GLOBALS['TL_DCA']['tl_page']['fields']['type']['options_callback'][0] = 'terminal42_folderpage.datacontainer.page';
 
-$GLOBALS['TL_DCA']['tl_page']['fields']['published']['save_callback'][] = ['terminal42_folderpage.datacontainer.page', 'onSavePublished'];
 $GLOBALS['TL_DCA']['tl_page']['fields']['alias']['save_callback'][] = ['terminal42_folderpage.datacontainer.page', 'adjustAlias'];
 array_unshift($GLOBALS['TL_DCA']['tl_page']['fields']['alias']['save_callback'], ['terminal42_folderpage.datacontainer.page', 'emptyFolderAliases']);
 

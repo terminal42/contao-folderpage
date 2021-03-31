@@ -174,23 +174,6 @@ class Page
     }
 
     /**
-     * A folder page can never be unpublished.
-     *
-     * @param string                $value
-     * @param \Contao\DataContainer $dc
-     *
-     * @return string
-     */
-    public function onSavePublished($value, $dc)
-    {
-        if (null !== $dc->activeRecord && 'folder' === $dc->activeRecord->type) {
-            return '1';
-        }
-
-        return $value;
-    }
-
-    /**
      * Clean up all folder page aliases (as they might contain something).
      *
      * @param string $value
