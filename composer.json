@@ -16,7 +16,7 @@
         "forum": "https://community.contao.org"
     },
     "require": {
-        "php": "^5.4 || ^7.0",
+        "php": "^5.4 || ^7.0 || ^8.0",
         "contao/core-bundle": "^4.2"
     },
     "require-dev": {
