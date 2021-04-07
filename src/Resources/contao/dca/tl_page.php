@@ -36,7 +36,7 @@ $GLOBALS['TL_DCA']['tl_page']['palettes']['folder'] = '{title_legend},title,type
 /*
  * Fields
  */
-if ('checkRootType' === $GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1]) {
+if (isset($GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback']) && 'checkRootType' === $GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0][1]) {
     $GLOBALS['TL_DCA']['tl_page']['fields']['type']['save_callback'][0] = ['terminal42_folderpage.datacontainer.page', 'onSaveType'];
 }
 
