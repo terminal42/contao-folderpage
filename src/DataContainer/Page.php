@@ -144,7 +144,6 @@ class Page
                 'alias' => '',
                 'noSearch' => '1',
                 'sitemap' => 'map_never',
-                'published' => '1',
                 'start' => '',
                 'stop' => '',
             ],
