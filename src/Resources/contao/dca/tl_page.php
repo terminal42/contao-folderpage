@@ -15,7 +15,7 @@
 $GLOBALS['TL_DCA']['tl_page']['config']['onsubmit_callback'][] = ['terminal42_folderpage.datacontainer.page', 'configureFolderPage'];
 
 foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $callback) {
-    if (!\is_array($callback)) {
+    if (!\is_array($callback) || 'tl_page' !== $callback[0]) {
         continue;
     }
 
@@ -25,6 +25,10 @@ foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
 
     if ('showFallbackWarning' === $callback[1]) {
         $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = ['terminal42_folderpage.datacontainer.page', 'showFallbackWarning'];
+    }
+
+    if ('setRootType' === $callback[1]) {
+        $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = ['terminal42_folderpage.datacontainer.page', 'setRootType'];
     }
 }
 
