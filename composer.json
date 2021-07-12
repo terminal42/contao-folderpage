@@ -4,10 +4,20 @@
     "description": "Provides a new page type for Contao that allows you to group pages into folders.",
     "keywords": ["contao", "folder", "page", "folderpage"],
     "license": "LGPL-3.0-or-later",
-    "authors":[
+    "authors": [
         {
-            "name":"terminal42 gmbh",
-            "homepage":"http://terminal42.ch"
+            "name": "terminal42 gmbh",
+            "homepage": "http://www.terminal42.ch"
+        }
+    ],
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/terminal42"
+        },
+        {
+            "type": "other",
+            "url": "https://ko-fi.com/terminal42"
         }
     ],
     "support": {
