@@ -275,7 +275,7 @@ class Page
                 ->execute(Input::get('pid'))
             ;
 
-            if ($objPage->pid == 0 || $objPage->type === 'folder') {
+            if ($objPage->pid == 0 && $objPage->type === 'folder') {
                 $GLOBALS['TL_DCA']['tl_page']['fields']['type']['default'] = 'root';
             }
         }
