@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle\DataContainer;
 
@@ -44,15 +45,6 @@ class Page
      */
     private $user;
 
-    /**
-     * Constructor.
-     *
-     * @param Connection            $db
-     * @param RequestStack          $requestStack
-     * @param SessionInterface      $session
-     * @param RouterInterface       $router
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(
         Connection $db,
         RequestStack $requestStack,
@@ -70,7 +62,7 @@ class Page
     /**
      * Override the default breadcrumb menu, we want to show folder pages before root pages.
      */
-    public function addBreadcrumb()
+    public function addBreadcrumb(): void
     {
         $this->updateBreadcrumbNode();
 
@@ -96,7 +88,7 @@ class Page
     /**
      * Show a warning if there is no language fallback page.
      */
-    public function showFallbackWarning()
+    public function showFallbackWarning(): void
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -112,13 +104,11 @@ class Page
         }
     }
 
-    public function hasInvalidTopLevels()
+    public function hasInvalidTopLevels(): bool
     {
-        $result = $this->db->query(
+        return $this->db->fetchOne(
             "SELECT COUNT(*) AS count FROM tl_page WHERE pid=0 AND type!='root' AND type!='folder'"
-        );
-
-        return $result->fetchColumn() > 0;
+        ) > 0;
     }
 
     /**
@@ -126,7 +116,7 @@ class Page
      *
      * @param \Contao\DataContainer $dc
      */
-    public function configureFolderPage($dc)
+    public function configureFolderPage($dc): void
     {
         if (null === $dc->activeRecord || 'folder' !== $dc->activeRecord->type) {
             return;
@@ -237,7 +227,7 @@ class Page
 
         if ($dc->activeRecord->pid > 0) {
             $rootAllowed = false;
-            $parentType = $this->db->fetchColumn('SELECT type FROM tl_page WHERE id=?', [$dc->activeRecord->pid]);
+            $parentType = $this->db->fetchOne('SELECT type FROM tl_page WHERE id=?', [$dc->activeRecord->pid]);
 
             // Allow root in second level if the parent is folder
             if ($parentType === 'folder') {
@@ -260,7 +250,7 @@ class Page
         return $options;
     }
 
-    public function setRootType(DataContainer $dc)
+    public function setRootType(DataContainer $dc): void
     {
         if ('create' !== Input::get('act')) {
             return;
@@ -284,7 +274,7 @@ class Page
     /**
      * Sets a new node if input value is given.
      */
-    private function updateBreadcrumbNode()
+    private function updateBreadcrumbNode(): void
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -346,7 +336,7 @@ class Page
      * @param int         $nodeId
      * @param PageModel[] $trail
      */
-    private function checkTrailAccess($nodeId, array $trail)
+    private function checkTrailAccess($nodeId, array $trail): void
     {
         $trailIds = array_map(
             function (PageModel $page) {
@@ -369,7 +359,7 @@ class Page
      * @param int         $nodeId
      * @param PageModel[] $trail
      */
-    private function buildBreadcrumb($nodeId, array $trail)
+    private function buildBreadcrumb($nodeId, array $trail): void
     {
         foreach ($trail as $page) {
             // No link for the active page
@@ -400,14 +390,14 @@ class Page
      *
      * @param array $ids
      */
-    private function updateChildren(array $ids)
+    private function updateChildren(array $ids): void
     {
         if (count($ids) < 1) {
             return;
         }
 
         foreach ($ids as $id) {
-            $alias = $this->db->fetchColumn('SELECT alias FROM tl_page WHERE id=?', [$id]);
+            $alias = $this->db->fetchOne('SELECT alias FROM tl_page WHERE id=?', [$id]);
             $alias = $this->cleanAlias($alias);
 
             $this->db->update('tl_page', ['alias' => $alias], ['id' => $id]);
