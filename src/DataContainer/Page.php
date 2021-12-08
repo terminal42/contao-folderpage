@@ -378,6 +378,7 @@ class Page
         $links = array_reverse($links);
 
         // Insert breadcrumb menu
+        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['breadcrumb'] = $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['breadcrumb'] ?? '';
         $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['breadcrumb'] .= '
 
 <ul id="tl_breadcrumb">
