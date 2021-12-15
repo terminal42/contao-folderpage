@@ -12,7 +12,7 @@
 /*
  * Page types.
  */
-$GLOBALS['TL_LANG']['PTY']['folder'] = 'Folder';
+$GLOBALS['TL_LANG']['PTY']['folder'] = ['Folder', 'A virtual page to organize pages into folders.'];
 
 /*
  * Miscellaneous
