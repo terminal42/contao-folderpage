@@ -26,10 +26,6 @@ foreach ($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] as $k => $ca
     if ('showFallbackWarning' === $callback[1]) {
         $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = ['terminal42_folderpage.datacontainer.page', 'showFallbackWarning'];
     }
-
-    if ('setRootType' === $callback[1]) {
-        $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = ['terminal42_folderpage.datacontainer.page', 'setRootType'];
-    }
 }
 
 /*
