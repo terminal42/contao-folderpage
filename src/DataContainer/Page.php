@@ -250,27 +250,6 @@ class Page
         return $options;
     }
 
-    public function setRootType(DataContainer $dc): void
-    {
-        if ('create' !== Input::get('act')) {
-            return;
-        }
-
-        // Insert into
-        if (Input::get('pid') == 0) {
-            $GLOBALS['TL_DCA']['tl_page']['fields']['type']['default'] = 'root';
-        } else {
-            $objPage = Database::getInstance()->prepare('SELECT * FROM '.$dc->table.' WHERE id=?')
-                ->limit(1)
-                ->execute(Input::get('pid'))
-            ;
-
-            if ($objPage->pid == 0 && $objPage->type === 'folder') {
-                $GLOBALS['TL_DCA']['tl_page']['fields']['type']['default'] = 'root';
-            }
-        }
-    }
-
     /**
      * Sets a new node if input value is given.
      */
