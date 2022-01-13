@@ -370,8 +370,9 @@ class Page
             }
         }
 
-        // Limit tree
+        // Limit tree and disable root trails
         $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['root'] = [$nodeId];
+        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['showRootTrails'] = false;
 
         // Add root link
         $links[] = \Image::getHtml('pagemounts.svg').' <a href="'.\Backend::addToUrl('pn=0').'" title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">'.$GLOBALS['TL_LANG']['MSC']['filterAll'].'</a>';
