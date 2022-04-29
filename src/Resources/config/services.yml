@@ -18,3 +18,9 @@ services:
         public: true
         arguments:
             - '@terminal42_folderpage.datacontainer.page'
+
+    terminal42_folderpage.migration.no_robots:
+        autoconfigure: true
+        class: Terminal42\FolderpageBundle\Migration\NoRobotsMigration
+        arguments:
+            - '@database_connection'
