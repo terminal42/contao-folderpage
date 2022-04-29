@@ -26,7 +26,7 @@
         "forum": "https://community.contao.org"
     },
     "require": {
-        "php": "^7.1 || ^8.0",
+        "php": "^7.4 || ^8.0",
         "contao/core-bundle": "^4.9",
         "doctrine/dbal": "^2.11 || ^3"
     },
