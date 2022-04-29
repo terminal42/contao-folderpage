@@ -1,10 +1,12 @@
 <?php
 
 
+use Terminal42\FolderpageBundle\PageType\FolderPage;
+
 /*
  * Page type.
  */
-$GLOBALS['TL_PTY']['folder'] = 'Terminal42\\FolderpageBundle\\PageType\\FolderPage';
+$GLOBALS['TL_PTY']['folder'] = FolderPage::class;
 
 /*
  * Replace core Hooks

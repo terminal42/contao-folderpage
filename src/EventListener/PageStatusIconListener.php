@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle\EventListener;
+
+use Contao\PageModel;
 
 class PageStatusIconListener
 {
     /**
      * Return our custom image for the folder page type.
      *
-     * @param object $page
-     * @param string $image
+     * @param PageModel $page
      *
      * @return string
      */
-    public function onGetPageStatusIcon($page, $image)
+    public function onGetPageStatusIcon($page, string $image)
     {
         if ('folder' === $page->type) {
             return 'folderC.svg';

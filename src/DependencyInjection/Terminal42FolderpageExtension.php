@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle\DependencyInjection;
 
@@ -10,7 +11,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class Terminal42FolderpageExtension extends Extension
 {
-    public function load(array $config, ContainerBuilder $container)
+    public function load(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,

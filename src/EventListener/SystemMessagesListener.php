@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle\EventListener;
 
@@ -14,8 +15,6 @@ class SystemMessagesListener
 
     /**
      * Constructor.
-     *
-     * @param Page $page
      */
     public function __construct(Page $page)
     {
@@ -24,10 +23,8 @@ class SystemMessagesListener
 
     /**
      * Show a warning if there are non-root pages on the top-level.
-     *
-     * @return string
      */
-    public function onGetSystemMessages()
+    public function onGetSystemMessages(): string
     {
         if ($this->page->hasInvalidTopLevels()) {
             return '<p class="tl_error">'.$GLOBALS['TL_LANG']['ERR']['topLevelRegular'].'</p>';
