@@ -130,6 +130,7 @@ class Page
                 'sitemap' => 'map_never',
                 'start' => '',
                 'stop' => '',
+                'robots' => 'noindex,nofollow',
             ],
             [
                 'id' => $dc->id,
