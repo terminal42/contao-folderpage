@@ -47,5 +47,12 @@
     },
     "extra": {
         "contao-manager-plugin": "Terminal42\\FolderpageBundle\\ContaoManager\\Plugin"
+    },
+    "config": {
+        "allow-plugins": {
+            "contao-components/installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "contao/manager-plugin": true
+        }
     }
 }
