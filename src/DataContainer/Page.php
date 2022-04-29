@@ -306,7 +306,7 @@ class Page
         if (!$this->user->isAdmin && !$this->user->hasAccess($trailIds, 'pagemounts')) {
             $this->session->set('tl_page_node', 0);
 
-            \System::log('Page ID '.$nodeId.' was not mounted', 'tl_page addBreadcrumb', TL_ERROR);
+            System::log('Page ID '.$nodeId.' was not mounted', 'tl_page addBreadcrumb', TL_ERROR);
 
             throw new RedirectResponseException($this->router->generate('contao_backend', ['act' => 'error']));
         }
@@ -331,7 +331,7 @@ class Page
         $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['showRootTrails'] = false;
 
         // Add root link
-        $links[] = Image::getHtml('pagemounts.svg').' <a href="'.\Backend::addToUrl('pn=0').'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">'.$GLOBALS['TL_LANG']['MSC']['filterAll'].'</a>';
+        $links[] = Image::getHtml('pagemounts.svg').' <a href="'.Backend::addToUrl('pn=0').'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">'.$GLOBALS['TL_LANG']['MSC']['filterAll'].'</a>';
         $links = array_reverse($links);
 
         // Insert breadcrumb menu
