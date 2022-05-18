@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * folderpage extension for Contao Open Source CMS
  *
@@ -12,6 +14,7 @@
 namespace Terminal42\FolderpageBundle\PageType;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
+use Contao\PageModel;
 use Contao\PageRegular;
 
 class FolderPage extends PageRegular
@@ -19,12 +22,12 @@ class FolderPage extends PageRegular
     /**
      * Generate a 404 page if this page is rendered in the frontend.
      *
-     * @param \PageModel $objPage
-     * @param bool       $blnCheckRequest
+     * @param PageModel $objPage
+     * @param bool      $blnCheckRequest
      *
      * @throws PageNotFoundException
      */
-    public function generate($objPage, $blnCheckRequest = false)
+    public function generate($objPage, $blnCheckRequest = false): void
     {
         throw new PageNotFoundException();
     }
@@ -32,12 +35,12 @@ class FolderPage extends PageRegular
     /**
      * Generate a 404 page if this page is rendered in the frontend.
      *
-     * @param \PageModel $objPage
-     * @param bool       $blnCheckRequest
+     * @param PageModel $objPage
+     * @param bool      $blnCheckRequest
      *
      * @throws PageNotFoundException
      */
-    public function getResponse($objPage, $blnCheckRequest=false)
+    public function getResponse($objPage, $blnCheckRequest = false): void
     {
         throw new PageNotFoundException();
     }
