@@ -27,14 +27,11 @@
     },
     "require": {
         "php": "^7.4 || ^8.0",
-        "contao/core-bundle": "^4.9",
-        "doctrine/dbal": "^2.11 || ^3"
+        "contao/core-bundle": "^4.13",
+        "doctrine/dbal": "^3"
     },
     "require-dev": {
         "contao/manager-plugin": "^2.0"
-    },
-    "replace": {
-        "contao-legacy/folderpage": "self.version"
     },
     "conflict": {
         "contao/manager-plugin": "<2.0 || >=3.0"
@@ -49,12 +46,5 @@
     },
     "scripts": {
         "cs-fixer": "@php tools/ecs/vendor/bin/ecs check src/ --fix --ansi"
-    },
-    "config": {
-        "allow-plugins": {
-            "contao-components/installer": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "contao/manager-plugin": true
-        }
     }
 }

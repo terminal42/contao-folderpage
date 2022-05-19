@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * folderpage extension for Contao Open Source CMS
- *
- * @copyright  Copyright (c) 2022, terminal42 gmbh
- * @author     terminal42 gmbh <info@terminal42.ch>
- * @license    LGPL-3.0+
- * @link       http://github.com/terminal42/contao-folderpage
- */
-
 namespace Terminal42\FolderpageBundle\Migration;
 
 use Contao\CoreBundle\Migration\AbstractMigration;
@@ -38,11 +29,11 @@ class NoRobotsMigration extends AbstractMigration
             return false;
         }
 
-        $statement = $this->connection->prepare(
-            "SELECT * FROM tl_page WHERE `type` = 'folder' AND `robots` != 'noindex,nofollow'"
+        $matches = $this->connection->fetchOne(
+            "SELECT COUNT(*) FROM tl_page WHERE `type` = 'folder' AND `robots` != 'noindex,nofollow'"
         );
 
-        return $statement->executeStatement() > 0;
+        return $matches > 0;
     }
 
     /**
@@ -51,7 +42,7 @@ class NoRobotsMigration extends AbstractMigration
     public function run(): MigrationResult
     {
         $statement = $this->connection->prepare(
-            "UPDATE `tl_page` SET `robots` = 'noindex,nofollow' WHERE `type` = 'folder' AND `robots` != 'noindex,nofollow'"
+            "UPDATE `tl_page` SET `robots` = 'noindex,nofollow' WHERE `type` = 'folder'"
         );
         $count = $statement->executeStatement();
 
