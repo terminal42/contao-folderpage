@@ -259,15 +259,40 @@ class Page
         // Insert into
         if (Input::get('pid') == 0) {
             $GLOBALS['TL_DCA']['tl_page']['fields']['type']['default'] = 'root';
-        } else {
+
+            return;
+        }
+
+        $isRootFolder = true;
+        $pid = (int) Input::get('pid');
+        $skipFirst = 1 === (int) Input::get('mode');
+
+        do {
             $objPage = Database::getInstance()->prepare('SELECT * FROM '.$dc->table.' WHERE id=?')
                 ->limit(1)
-                ->execute(Input::get('pid'))
+                ->execute($pid)
             ;
 
-            if ($objPage->pid == 0 && $objPage->type === 'folder') {
-                $GLOBALS['TL_DCA']['tl_page']['fields']['type']['default'] = 'root';
+            if (!$objPage->numRows) {
+                break;
             }
+
+            $pid = $objPage->pid;
+
+            // Paste after the given page: pasting after root page inside a folder is ok.
+            if ($skipFirst) {
+                $skipFirst = false;
+                continue;
+            }
+
+            if ('folder' !== $objPage->type) {
+                $isRootFolder = false;
+                break;
+            }
+        } while ($pid > 0);
+
+        if ($isRootFolder) {
+            $GLOBALS['TL_DCA']['tl_page']['fields']['type']['default'] = 'root';
         }
     }
 
