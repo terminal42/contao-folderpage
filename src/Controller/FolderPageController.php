@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle\Controller;
 
+use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\CoreBundle\ServiceAnnotation\Page;
 
 /**
@@ -11,4 +12,8 @@ use Contao\CoreBundle\ServiceAnnotation\Page;
  */
 class FolderPageController
 {
+    public function __invoke(): void
+    {
+        throw new PageNotFoundException();
+    }
 }
