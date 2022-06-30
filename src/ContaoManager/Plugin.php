@@ -12,10 +12,7 @@ use Terminal42\FolderpageBundle\Terminal42FolderpageBundle;
 
 class Plugin implements BundlePluginInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getBundles(ParserInterface $parser)
+    public function getBundles(ParserInterface $parser): array
     {
         return [
             (new BundleConfig(Terminal42FolderpageBundle::class))
