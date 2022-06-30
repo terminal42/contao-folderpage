@@ -15,8 +15,8 @@ use Contao\Input;
 use Contao\StringUtil;
 use Contao\Validator;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -28,13 +28,13 @@ use Symfony\Component\Security\Core\Security;
 class PageBreadcrumbListener
 {
     private Connection $connection;
-    private SessionInterface $session;
+    private RequestStack $requestStack;
     private Security $security;
 
-    public function __construct(Connection $connection, SessionInterface $session, Security $security)
+    public function __construct(Connection $connection, RequestStack $requestStack, Security $security)
     {
         $this->connection = $connection;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->security = $security;
     }
 
@@ -58,7 +58,7 @@ class PageBreadcrumbListener
     private function addBreadcrumb(): void
     {
         /** @var AttributeBagInterface $objSession */
-        $objSession = $this->session->getBag('contao_backend');
+        $objSession = $this->requestStack->getSession()->getBag('contao_backend');
 
         // Set a new node
         if (isset($_GET['pn'])) {
