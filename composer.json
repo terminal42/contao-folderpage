@@ -45,6 +45,6 @@
         "contao-manager-plugin": "Terminal42\\FolderpageBundle\\ContaoManager\\Plugin"
     },
     "scripts": {
-        "cs-fixer": "@php tools/ecs/vendor/bin/ecs check src/ --fix --ansi"
+        "cs-fixer": "@php tools/ecs/vendor/bin/ecs check src/ --config tools/ecs/config.php --fix --ansi"
     }
 }
