@@ -34,7 +34,6 @@ class ConfigureFolderPageListener
             [
                 'alias' => '',
                 'noSearch' => '1',
-                'sitemap' => 'map_never',
                 'start' => '',
                 'stop' => '',
                 'robots' => 'noindex,nofollow',
