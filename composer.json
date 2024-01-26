@@ -26,12 +26,13 @@
         "forum": "https://community.contao.org"
     },
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.1",
         "contao/core-bundle": "^4.13 || ^5.0",
         "doctrine/dbal": "^3"
     },
     "require-dev": {
-        "contao/manager-plugin": "^2.0"
+        "contao/manager-plugin": "^2.0",
+        "terminal42/contao-build-tools": "dev-main"
     },
     "conflict": {
         "contao/manager-plugin": "<2.0 || >=3.0"
@@ -43,8 +44,5 @@
     },
     "extra": {
         "contao-manager-plugin": "Terminal42\\FolderpageBundle\\ContaoManager\\Plugin"
-    },
-    "scripts": {
-        "cs-fixer": "@php tools/ecs/vendor/bin/ecs check src/ --config tools/ecs/config.php --fix --ansi"
     }
 }

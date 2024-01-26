@@ -7,8 +7,8 @@ namespace Terminal42\FolderpageBundle\EventListener;
 use Contao\Backend;
 use Contao\BackendUser;
 use Contao\Controller;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\CoreBundle\Exception\AccessDeniedException;
-use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Environment;
 use Contao\Image;
 use Contao\Input;
@@ -22,20 +22,15 @@ use Symfony\Component\Security\Core\Security;
 /**
  * Overrides the default breadcrumb menu, we want to show folder pages before root pages.
  * Duplicated from Contao\Backend::addPagesBreadcrumb() but updated for DI.
- *
- * @Hook("loadDataContainer")
  */
+#[AsHook('loadDataContainer')]
 class PageBreadcrumbListener
 {
-    private Connection $connection;
-    private RequestStack $requestStack;
-    private Security $security;
-
-    public function __construct(Connection $connection, RequestStack $requestStack, Security $security)
-    {
-        $this->connection = $connection;
-        $this->requestStack = $requestStack;
-        $this->security = $security;
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly RequestStack $requestStack,
+        private readonly Security $security,
+    ) {
     }
 
     public function __invoke(string $table): void
@@ -49,7 +44,7 @@ class PageBreadcrumbListener
                 continue;
             }
 
-            $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = fn () => $this->addBreadcrumb();
+            $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = $this->addBreadcrumb(...);
 
             return;
         }
@@ -61,14 +56,14 @@ class PageBreadcrumbListener
         $objSession = $this->requestStack->getSession()->getBag('contao_backend');
 
         // Set a new node
-        if (isset($_GET['pn'])) {
+        if (Input::get('pn') !== null) {
             // Check the path (thanks to Arnaud Buchoux)
             if (Validator::isInsecurePath(Input::get('pn', true))) {
                 throw new \RuntimeException('Insecure path '.Input::get('pn', true));
             }
 
             $objSession->set('tl_page_node', Input::get('pn', true));
-            Controller::redirect(preg_replace('/&pn=[^&]*/', '', Environment::get('request')));
+            Controller::redirect(preg_replace('/&pn=[^&]*/', '', Environment::get('requestUri')));
         }
 
         $intNode = (int) $objSession->get('tl_page_node', 0);

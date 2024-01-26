@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle\EventListener;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Database\Result;
 use Contao\PageModel;
 
-/**
- * @Hook("getPageStatusIcon")
- */
+#[AsHook('getPageStatusIcon')]
 class PageStatusIconListener
 {
     /**

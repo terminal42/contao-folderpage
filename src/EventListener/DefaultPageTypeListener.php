@@ -4,23 +4,19 @@ declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle\EventListener;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Input;
 use Doctrine\DBAL\Connection;
 
 /**
  * Sets the default value of tl_page.type. In Contao, a root type is only allowed
  * if pid=0, but with folderpage the PID can also be a folder page ID.
- *
- * @Hook("loadDataContainer")
  */
+#[AsHook('loadDataContainer')]
 class DefaultPageTypeListener
 {
-    private Connection $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(private readonly Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     public function __invoke(string $table): void
@@ -34,7 +30,7 @@ class DefaultPageTypeListener
                 continue;
             }
 
-            $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = fn (...$args) => $this->setRootType(...$args);
+            $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = $this->setRootType(...);
 
             return;
         }

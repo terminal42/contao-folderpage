@@ -11,11 +11,8 @@ use Doctrine\DBAL\Exception;
 
 class NoRobotsMigration extends AbstractMigration
 {
-    private Connection $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(private readonly Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     /**
@@ -30,7 +27,7 @@ class NoRobotsMigration extends AbstractMigration
         }
 
         $matches = $this->connection->fetchOne(
-            "SELECT COUNT(*) FROM tl_page WHERE `type` = 'folder' AND `robots` != 'noindex,nofollow'"
+            "SELECT COUNT(*) FROM tl_page WHERE `type` = 'folder' AND `robots` != 'noindex,nofollow'",
         );
 
         return $matches > 0;
@@ -42,13 +39,13 @@ class NoRobotsMigration extends AbstractMigration
     public function run(): MigrationResult
     {
         $statement = $this->connection->prepare(
-            "UPDATE `tl_page` SET `robots` = 'noindex,nofollow' WHERE `type` = 'folder'"
+            "UPDATE `tl_page` SET `robots` = 'noindex,nofollow' WHERE `type` = 'folder'",
         );
         $count = $statement->executeStatement();
 
         return $this->createResult(
             true,
-            'Updated '.$count.' folder pages.'
+            'Updated '.$count.' folder pages.',
         );
     }
 }

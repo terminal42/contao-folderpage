@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle\EventListener;
 
-use Contao\CoreBundle\ServiceAnnotation\Callback;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
 use Doctrine\DBAL\Connection;
 
-/**
- * @Callback(table="tl_page", target="config.onsubmit")
- */
+#[AsCallback(table: 'tl_page', target: 'config.onsubmit')]
 class ConfigureFolderPageListener
 {
-    private Connection $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(private readonly Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     /**
@@ -40,7 +35,7 @@ class ConfigureFolderPageListener
             ],
             [
                 'id' => $dc->id,
-            ]
+            ],
         );
     }
 }
