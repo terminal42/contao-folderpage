@@ -6,13 +6,12 @@ namespace Terminal42\FolderpageBundle\EventListener;
 
 use Contao\CoreBundle\Event\FilterPageTypeEvent;
 use Doctrine\DBAL\Connection;
-use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 /**
  * Allows a folder page on the top level of the page tree.
- *
- * @ServiceTag("kernel.event_listener")
  */
+#[AutoconfigureTag('kernel.event_listener')]
 class FilterPageTypeListener
 {
     public function __construct(private readonly Connection $connection)

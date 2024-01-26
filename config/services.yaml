@@ -5,3 +5,8 @@ services:
 
     Terminal42\FolderpageBundle\:
         resource: ../src/
+
+    Terminal42\FolderpageBundle\Voter\PageTypeAccessVoter:
+        decorates: contao.security.data_container.page_type_access_voter
+        arguments:
+            - '@Terminal42\FolderpageBundle\Voter\PageTypeAccessVoter.inner'
