@@ -12,8 +12,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\CacheableVoterInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
-class PageTypeAccessVoter implements CacheableVoterInterface
+class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
 {
     public function __construct(
         private readonly CacheableVoterInterface $inner,
@@ -77,5 +78,12 @@ class PageTypeAccessVoter implements CacheableVoterInterface
         }
 
         return 'folder' === $this->connection->fetchOne('SELECT type FROM tl_page WHERE id=?', [$subject->getNewPid()]);
+    }
+
+    public function reset(): void
+    {
+        if ($this->inner instanceof ResetInterface) {
+            $this->inner->reset();
+        }
     }
 }
