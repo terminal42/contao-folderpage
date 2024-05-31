@@ -52,6 +52,13 @@ class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
         return $result;
     }
 
+    public function reset(): void
+    {
+        if ($this->inner instanceof ResetInterface) {
+            $this->inner->reset();
+        }
+    }
+
     private function validateCreateOrUpdateFolder(TokenInterface $token, CreateAction|UpdateAction $subject): bool
     {
         $types = [];
@@ -78,12 +85,5 @@ class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
         }
 
         return 'folder' === $this->connection->fetchOne('SELECT type FROM tl_page WHERE id=?', [$subject->getNewPid()]);
-    }
-
-    public function reset(): void
-    {
-        if ($this->inner instanceof ResetInterface) {
-            $this->inner->reset();
-        }
     }
 }

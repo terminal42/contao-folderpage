@@ -56,7 +56,7 @@ class PageBreadcrumbListener
         $objSession = $this->requestStack->getSession()->getBag('contao_backend');
 
         // Set a new node
-        if (Input::get('pn') !== null) {
+        if (null !== Input::get('pn')) {
             // Check the path (thanks to Arnaud Buchoux)
             if (Validator::isInsecurePath(Input::get('pn', true))) {
                 throw new \RuntimeException('Insecure path '.Input::get('pn', true));
@@ -70,11 +70,6 @@ class PageBreadcrumbListener
 
         if ($intNode < 1) {
             return;
-        }
-
-        // Check the path (thanks to Arnaud Buchoux)
-        if (Validator::isInsecurePath($intNode)) {
-            throw new \RuntimeException('Insecure path '.$intNode);
         }
 
         $arrIds = [];
