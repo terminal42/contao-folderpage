@@ -17,7 +17,7 @@ use Contao\Validator;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Overrides the default breadcrumb menu, we want to show folder pages before root pages.
@@ -29,7 +29,7 @@ class PageBreadcrumbListener
     public function __construct(
         private readonly Connection $connection,
         private readonly RequestStack $requestStack,
-        private readonly Security $security,
+        private readonly TokenStorageInterface $tokenStorage,
     ) {
     }
 
@@ -74,7 +74,7 @@ class PageBreadcrumbListener
 
         $arrIds = [];
         $arrLinks = [];
-        $objUser = $this->security->getUser();
+        $objUser = $this->tokenStorage->getToken()?->getUser();
 
         if (!$objUser instanceof BackendUser) {
             return;
