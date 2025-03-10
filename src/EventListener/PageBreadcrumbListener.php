@@ -118,7 +118,7 @@ class PageBreadcrumbListener
 
         // Limit tree and disable root trails
         $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['root'] = [$intNode];
-        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['showRootTrails'] = false;
+        $GLOBALS['TL_DCA']['tl_page']['list']['sorting']['visibleRoot'] = $intNode;
 
         // Add root link
         $arrLinks[] = Image::getHtml('pagemounts.svg').' <a href="'.Backend::addToUrl('pn=0').'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">'.$GLOBALS['TL_LANG']['MSC']['filterAll'].'</a>';
