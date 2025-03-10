@@ -35,16 +35,16 @@ class PageBreadcrumbListener
 
     public function __invoke(string $table): void
     {
-        if ('tl_page' !== $table) {
+        if ('tl_page' !== $table && 'tl_article' !== $table) {
             return;
         }
 
-        foreach (($GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'] ?? []) as $k => $callback) {
+        foreach (($GLOBALS['TL_DCA'][$table]['config']['onload_callback'] ?? []) as $k => $callback) {
             if (!\is_array($callback) || 'tl_page' !== $callback[0] || 'addBreadcrumb' !== $callback[1]) {
                 continue;
             }
 
-            $GLOBALS['TL_DCA']['tl_page']['config']['onload_callback'][$k] = $this->addBreadcrumb(...);
+            $GLOBALS['TL_DCA'][$table]['config']['onload_callback'][$k] = $this->addBreadcrumb(...);
 
             return;
         }
@@ -63,7 +63,7 @@ class PageBreadcrumbListener
             }
 
             $objSession->set('tl_page_node', Input::get('pn', true));
-            Controller::redirect(preg_replace('/&pn=[^&]*/', '', Environment::get('requestUri')));
+            Controller::redirect(preg_replace('/&pn=[^&]*/', '', (string) Environment::get('requestUri')));
         }
 
         $intNode = (int) $objSession->get('tl_page_node', 0);
