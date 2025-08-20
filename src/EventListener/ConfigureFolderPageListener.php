@@ -24,18 +24,25 @@ class ConfigureFolderPageListener
             return;
         }
 
+        $data = [
+            'alias' => '',
+            'start' => '',
+            'stop' => '',
+            'robots' => 'noindex,nofollow',
+        ];
+
+        $columns = $this->connection->createSchemaManager()->listTableColumns('tl_page');
+
+        if (\array_key_exists('noSearch', $columns)) {
+            $data['noSearch'] = '1';
+        } elseif (\array_key_exists('searchIndexer', $columns)) {
+            $data['searchIndexer'] = 'never_index';
+        }
+
         $this->connection->update(
             'tl_page',
-            [
-                'alias' => '',
-                'noSearch' => '1',
-                'start' => '',
-                'stop' => '',
-                'robots' => 'noindex,nofollow',
-            ],
-            [
-                'id' => $dc->id,
-            ],
+            $data,
+            ['id' => $dc->id],
         );
     }
 }
