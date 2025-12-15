@@ -16,4 +16,5 @@ composer require terminal42/contao-folderpage
 
 ## Configuration
 
-There's absolutely nothing to configure :-)
+Switch the navigation module to the `nav_folderpage` template.
+This will display the folder as a navigation item **without a clickable link**.
