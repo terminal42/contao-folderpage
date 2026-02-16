@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Terminal42\FolderpageBundle\EventListener;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
-use Contao\DataContainer;
+use Contao\DC_Table;
 use Doctrine\DBAL\Connection;
 
 #[AsCallback(table: 'tl_page', target: 'config.onsubmit')]
@@ -18,7 +18,7 @@ class ConfigureFolderPageListener
     /**
      * Sets fixed configuration for a folder page.
      */
-    public function __invoke(DataContainer $dc): void
+    public function __invoke(DC_Table $dc): void
     {
         if (($activeRecord = $dc->getActiveRecord()) === null) {
             return;
@@ -37,7 +37,7 @@ class ConfigureFolderPageListener
 
         $schemaManager = $this->connection->createSchemaManager();
 
-        // Use the new method if available
+        // @phpstan-ignore-next-line
         if (method_exists($schemaManager, 'introspectTableColumnsByUnquotedName')) {
             $columns = $schemaManager->introspectTableColumnsByUnquotedName('tl_page');
         } else {
