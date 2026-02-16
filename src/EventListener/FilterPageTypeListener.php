@@ -22,19 +22,19 @@ class FilterPageTypeListener
     {
         $dc = $event->getDataContainer();
 
-        if (!$dc->activeRecord) {
+        if (($activeRecord = $dc->getActiveRecord()) === null) {
             return;
         }
 
         // The first level can only have root pages (see #6360)
-        if (!$dc->activeRecord->pid) {
+        if (!($activeRecord['pid'] ?? false)) {
             $event->addOption('folder');
 
             return;
         }
 
         $isRootFolder = true;
-        $pid = $dc->activeRecord->pid;
+        $pid = $activeRecord['pid'];
 
         do {
             $parentPage = $this->connection->fetchAssociative('SELECT pid, type FROM tl_page WHERE id=?', [$pid]);

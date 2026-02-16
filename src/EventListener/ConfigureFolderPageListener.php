@@ -20,7 +20,11 @@ class ConfigureFolderPageListener
      */
     public function __invoke(DataContainer $dc): void
     {
-        if (null === $dc->activeRecord || 'folder' !== $dc->activeRecord->type) {
+        if (($activeRecord = $dc->getActiveRecord()) === null) {
+            return;
+        }
+
+        if (($activeRecord['type'] ?? null) !== 'folder') {
             return;
         }
 
@@ -31,7 +35,14 @@ class ConfigureFolderPageListener
             'robots' => 'noindex,nofollow',
         ];
 
-        $columns = $this->connection->createSchemaManager()->listTableColumns('tl_page');
+        $schemaManager = $this->connection->createSchemaManager();
+
+        // Use the new method if available
+        if (method_exists($schemaManager, 'introspectTableColumnsByUnquotedName')) {
+            $columns = $schemaManager->introspectTableColumnsByUnquotedName('tl_page');
+        } else {
+            $columns = $schemaManager->listTableColumns('tl_page');
+        }
 
         if (\array_key_exists('noSearch', $columns)) {
             $data['noSearch'] = '1';
