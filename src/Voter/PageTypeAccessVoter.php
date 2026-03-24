@@ -35,6 +35,13 @@ class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
 
     public function vote(TokenInterface $token, $subject, array $attributes): int
     {
+        if (
+            ($subject instanceof CreateAction || $subject instanceof UpdateAction)
+            && $this->isTopLevelFolder($subject)
+        ) {
+            return $this->validateTopLevelFolderTypes($subject) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
+        }
+
         $result = $this->inner->vote($token, $subject, $attributes);
 
         // Only check permissions if access is denied
@@ -57,6 +64,49 @@ class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
         if ($this->inner instanceof ResetInterface) {
             $this->inner->reset();
         }
+    }
+
+    /**
+     * The top-level folder allows only the "root" page types.
+     */
+    private function validateTopLevelFolderTypes(CreateAction|UpdateAction $subject): bool
+    {
+        $newType = $subject->getNew()['type'] ?? null;
+
+        if ($subject instanceof UpdateAction && !$newType) {
+            $newType = $subject->getCurrent()['type'] ?? null;
+        }
+
+        if (!$newType) {
+            return true;
+        }
+
+        return 'root' === $newType;
+    }
+
+    private function isTopLevelFolder(CreateAction|UpdateAction $subject): bool
+    {
+        $pid = null;
+
+        if ($subject instanceof UpdateAction && $subject->getNewPid()) {
+            $pid = $subject->getNewPid();
+        } elseif ($subject instanceof CreateAction && isset($subject->getNew()['pid'])) {
+            $pid = (int) $subject->getNew()['pid'];
+        } elseif ($subject instanceof UpdateAction && isset($subject->getCurrent()['pid'])) {
+            $pid = (int) $subject->getCurrent()['pid'];
+        }
+
+        if (!$pid) {
+            return false;
+        }
+
+        $parent = $this->connection->fetchAssociative('SELECT type, pid FROM tl_page WHERE id = ?',[$pid]);
+
+        if (!$parent) {
+            return false;
+        }
+
+        return 'folder' === $parent['type'] && 0 === (int) $parent['pid'];
     }
 
     private function validateCreateOrUpdateFolder(TokenInterface $token, CreateAction|UpdateAction $subject): bool
