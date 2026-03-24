@@ -100,7 +100,7 @@ class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
             return false;
         }
 
-        $parent = $this->connection->fetchAssociative('SELECT type, pid FROM tl_page WHERE id = ?',[$pid]);
+        $parent = $this->connection->fetchAssociative('SELECT type, pid FROM tl_page WHERE id = ?', [$pid]);
 
         if (!$parent) {
             return false;
