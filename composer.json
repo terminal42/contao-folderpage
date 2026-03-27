@@ -28,7 +28,12 @@
     "require": {
         "php": "^8.1",
         "contao/core-bundle": "~5.3.13 || ^5.4.1",
-        "doctrine/dbal": "^3 || ^4"
+        "doctrine/dbal": "^3 || ^4",
+        "symfony/dependency-injection": "^6.4 || ^7",
+        "symfony/http-foundation":  "^6.4 || ^7",
+        "symfony/http-kernel": "^6.4 || ^7",
+        "symfony/security-core":  "^6.4 || ^7",
+        "symfony/service-contracts": "^3.0"
     },
     "require-dev": {
         "contao/manager-plugin": "^2.0",
