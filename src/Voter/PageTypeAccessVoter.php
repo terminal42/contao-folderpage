@@ -8,16 +8,19 @@ use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\CoreBundle\Security\DataContainer\CreateAction;
 use Contao\CoreBundle\Security\DataContainer\UpdateAction;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\CacheableVoterInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
+#[AsDecorator('contao.security.data_container.page_type_access_voter')]
 class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
 {
     public function __construct(
-        private readonly CacheableVoterInterface $inner,
+        #[AutowireDecorated] private readonly CacheableVoterInterface $inner,
         private readonly AccessDecisionManagerInterface $accessDecisionManager,
         private readonly Connection $connection,
     ) {

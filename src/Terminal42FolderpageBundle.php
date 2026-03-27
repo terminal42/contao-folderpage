@@ -4,12 +4,22 @@ declare(strict_types=1);
 
 namespace Terminal42\FolderpageBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class Terminal42FolderpageBundle extends Bundle
+class Terminal42FolderpageBundle extends AbstractBundle
 {
-    public function getPath(): string
+    /**
+     * @param array<string, mixed> $config
+     */
+    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
-        return \dirname(__DIR__);
+        $container
+            ->services()
+            ->load(__NAMESPACE__.'\\', '../src/')
+            ->autoconfigure()
+            ->autowire()
+        ;
     }
 }
