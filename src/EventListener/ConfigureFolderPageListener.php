@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Terminal42\FolderpageBundle\EventListener;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
-use Contao\DataContainer;
+use Contao\DC_Table;
 use Doctrine\DBAL\Connection;
 
 #[AsCallback(table: 'tl_page', target: 'config.onsubmit')]
@@ -18,9 +18,13 @@ class ConfigureFolderPageListener
     /**
      * Sets fixed configuration for a folder page.
      */
-    public function __invoke(DataContainer $dc): void
+    public function __invoke(DC_Table $dc): void
     {
-        if (null === $dc->activeRecord || 'folder' !== $dc->activeRecord->type) {
+        if (($activeRecord = $dc->getActiveRecord()) === null) {
+            return;
+        }
+
+        if (($activeRecord['type'] ?? null) !== 'folder') {
             return;
         }
 
@@ -31,7 +35,14 @@ class ConfigureFolderPageListener
             'robots' => 'noindex,nofollow',
         ];
 
-        $columns = $this->connection->createSchemaManager()->listTableColumns('tl_page');
+        $schemaManager = $this->connection->createSchemaManager();
+
+        // @phpstan-ignore-next-line
+        if (method_exists($schemaManager, 'introspectTableColumnsByUnquotedName')) {
+            $columns = $schemaManager->introspectTableColumnsByUnquotedName('tl_page');
+        } else {
+            $columns = $schemaManager->listTableColumns('tl_page');
+        }
 
         if (\array_key_exists('noSearch', $columns)) {
             $data['noSearch'] = '1';
