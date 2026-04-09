@@ -13,10 +13,8 @@
             %}
             {% if item.type == 'folder' %}
                 <span{{ link_attributes }}>{{ item.link }}</span>
-                {{ item.subitems|default('') }}
             {% elseif item.isActive %}
                 <strong{{ link_attributes }}>{{ item.link }}</strong>
-                {{ item.subitems|default('') }}
             {% else %}
                 {% set link_attributes = attrs()
                     .set('href', item.href|default('./'))
@@ -28,8 +26,8 @@
                     .mergeWith(link_attributes|default)
                 %}
                 <a{{ link_attributes }}>{{ item.link }}</a>
-                {{ item.subitems|default('') }}
             {% endif %}
+            {{ item.subitems|default('')|raw }}
         </li>
     {% endfor %}
 </ul>
