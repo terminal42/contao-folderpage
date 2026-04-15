@@ -1,33 +1,35 @@
 <ul class="{{ level }}">
     {% for item in items %}
-        {% set item_attributes = attrs()
-            .addClass(item.class|default)
-            .addClass('folder', item.type == 'folder')
-            .mergeWith(item_attributes|default)
-        %}
-        <li{{ item_attributes }}>
-            {% set link_attributes = attrs()
+        {% block item %}
+            {% set item_attributes = attrs()
                 .addClass(item.class|default)
-                .set('aria-haspopup', 'true', item.subitems is not empty)
-                .mergeWith(link_attributes|default)
+                .addClass('folder', item.type == 'folder')
+                .mergeWith(item_attributes|default)
             %}
-            {% if item.type == 'folder' %}
-                <span{{ link_attributes }}>{{ item.link }}</span>
-            {% elseif item.isActive %}
-                <strong{{ link_attributes }}>{{ item.link }}</strong>
-            {% else %}
+            <li{{ item_attributes }}>
                 {% set link_attributes = attrs()
-                    .set('href', item.href|default('./'))
-                    .set('title', item.pageTitle|default(item.title))
-                    .setIfExists('accesskey', item.accesskey|default)
-                    .setIfExists('tabindex', item.tabindex|default)
-                    .mergeWith(item.target|default)
-                    .mergeWith(item.rel|default)
+                    .addClass(item.class|default)
+                    .set('aria-haspopup', 'true', item.subitems is not empty)
                     .mergeWith(link_attributes|default)
                 %}
-                <a{{ link_attributes }}>{{ item.link }}</a>
-            {% endif %}
-            {{ item.subitems|default('')|raw }}
-        </li>
+                {% if item.type == 'folder' %}
+                    <span{{ link_attributes }}>{{ item.link }}</span>
+                {% elseif item.isActive %}
+                    <strong{{ link_attributes }}>{{ item.link }}</strong>
+                {% else %}
+                    {% set link_attributes = attrs()
+                        .set('href', item.href|default('./'))
+                        .set('title', item.pageTitle|default(item.title))
+                        .setIfExists('accesskey', item.accesskey|default)
+                        .setIfExists('tabindex', item.tabindex|default)
+                        .mergeWith(item.target|default)
+                        .mergeWith(item.rel|default)
+                        .mergeWith(link_attributes|default)
+                    %}
+                    <a{{ link_attributes }}>{{ item.link }}</a>
+                {% endif %}
+                {{ item.subitems|default('')|raw }}
+            </li>
+        {% endblock %}
     {% endfor %}
 </ul>
