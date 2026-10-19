@@ -19,7 +19,14 @@ class PageStatusIconListener
     public function __invoke($page, string $image): string
     {
         if ('folder' === $page->type) {
-            return 'folderC.svg';
+            $sub = '';
+
+            // Get the sub from the image name generate by Contao
+            if (preg_match('/^regular_(\d+).svg$/', $image, $matches)) {
+                $sub = $matches[1];
+            }
+
+            return sprintf('bundles/terminal42folderpage/folder%s.svg', ($sub > 0) ? '_'.$sub : '');
         }
 
         return $image;
