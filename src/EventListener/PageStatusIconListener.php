@@ -31,7 +31,7 @@ class PageStatusIconListener
                 $sub = $matches[1];
             }
 
-            $file = sprintf('folder%s.svg', ($sub > 0) ? '_'.$sub : '');
+            $file = \sprintf('folder%s.svg', $sub > 0 ? '_'.$sub : '');
 
             return $this->packages->getUrl($file, 'terminal42_folderpage');
         }
