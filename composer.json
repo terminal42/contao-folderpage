@@ -29,6 +29,7 @@
         "php": "^8.1",
         "contao/core-bundle": "~5.3.13 || ^5.4.1",
         "doctrine/dbal": "^3 || ^4",
+        "symfony/asset": "^6.4 || ^7",
         "symfony/dependency-injection": "^6.4 || ^7",
         "symfony/http-foundation":  "^6.4 || ^7",
         "symfony/http-kernel": "^6.4 || ^7",
