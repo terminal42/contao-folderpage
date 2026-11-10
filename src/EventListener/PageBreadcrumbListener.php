@@ -101,9 +101,9 @@ class PageBreadcrumbListener
 
             // No link for the active page or pages in the trail
             if ((int) $page['id'] === $intNode || !$objUser->hasAccess($page['id'], 'pagemounts')) {
-                $arrLinks[] = Backend::addPageIcon($page, '', null, '', true).' '.$page['title'];
+                $arrLinks[] = Backend::addPageIcon($page, '', null, '', true).' '.StringUtil::specialchars($page['title']);
             } else {
-                $arrLinks[] = Backend::addPageIcon($page, '', null, '', true).' <a href="'.Backend::addToUrl('pn='.$page['id']).'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectNode']).'">'.$page['title'].'</a>';
+                $arrLinks[] = Backend::addPageIcon($page, '', null, '', true).' <a href="'.Backend::addToUrl('pn='.$page['id']).'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectNode']).'">'.StringUtil::specialchars($page['title']).'</a>';
             }
 
             $intId = (int) $page['pid'];

@@ -14,6 +14,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\CacheableVoterInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Contracts\Service\ResetInterface;
 
 #[AsDecorator('contao.security.data_container.page_type_access_voter')]
@@ -36,7 +37,7 @@ class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
         return $this->inner->supportsType($subjectType);
     }
 
-    public function vote(TokenInterface $token, $subject, array $attributes): int
+    public function vote(TokenInterface $token, $subject, array $attributes, ?Vote $vote = null): int
     {
         if (
             ($subject instanceof CreateAction || $subject instanceof UpdateAction)
@@ -45,7 +46,7 @@ class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
             return $this->validateTopLevelFolderTypes($subject) ? VoterInterface::ACCESS_GRANTED : VoterInterface::ACCESS_DENIED;
         }
 
-        $result = $this->inner->vote($token, $subject, $attributes);
+        $result = $this->inner->vote($token, $subject, $attributes, $vote);
 
         // Only check permissions if access is denied
         if (
