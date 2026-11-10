@@ -13,8 +13,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\CacheableVoterInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
 #[AsDecorator('contao.security.data_container.page_type_access_voter')]
@@ -37,7 +37,7 @@ class PageTypeAccessVoter implements CacheableVoterInterface, ResetInterface
         return $this->inner->supportsType($subjectType);
     }
 
-    public function vote(TokenInterface $token, $subject, array $attributes, ?Vote $vote = null): int
+    public function vote(TokenInterface $token, $subject, array $attributes, Vote|null $vote = null): int
     {
         if (
             ($subject instanceof CreateAction || $subject instanceof UpdateAction)
